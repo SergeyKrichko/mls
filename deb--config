@@ -24,17 +24,17 @@ else
 fi
 
 # config-NETSOFT
-wget https://k-sergey-v.github.io/Scrypt/deb--config-netsoft
+wget https://mls.sk87.top/deb--config-netsoft
 bash deb--config-netsoft
 
 # config-NETWORK
-wget https://k-sergey-v.github.io/Scrypt/deb--config-network
+wget https://mls.sk87.top/deb--config-network
 bash deb--config-network
 
 # config-SSH
-wget https://k-sergey-v.github.io/Scrypt/deb--config-ssh
+wget https://mls.sk87.top/deb--config-ssh
 bash deb--config-ssh
 
 # config-NEWUSER
-wget https://k-sergey-v.github.io/Scrypt/deb--config-newuser
+wget https://mls.sk87.top/deb--config-newuser
 bash deb--config-newuser
