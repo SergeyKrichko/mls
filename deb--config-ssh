@@ -2,3 +2,45 @@
 # wget https://mls.sk87.top/deb--config-ssh && bash deb--config-ssh
 # version by 2025-10-10
 # Sergey Krichko
+################
+set -e
+
+echo "[SSH] >>> Configuration SSH..."
+SSHD_CONFIG="/etc/ssh/sshd_config"
+
+# Get the current port (default 22 if not specified)
+CURRENT_PORT=$(grep -E "^Port " "$SSHD_CONFIG" | awk '{print $2}' || true)
+if [ -z "$CURRENT_PORT" ]; then
+    CURRENT_PORT=22
+fi
+echo "[SSH] >>> Current SSH port: $CURRENT_PORT"
+
+# === Request new port ===
+read -p "[SSH] >>> Enter a new port for SSH (1-65535): " NEW_PORT
+
+# === Port check ===
+if ! [[ "$NEW_PORT" =~ ^[0-9]+$ ]] || [ "$NEW_PORT" -lt 1 ] || [ "$NEW_PORT" -gt 65535 ]; then
+    echo "[SSH][!] >>> Invalid port: $NEW_PORT"
+    exit 1
+fi
+
+# === Changing the port in sshd_config ===
+echo "[SSH] >>> Changing the SSH port to $NEW_PORT..."
+if grep -q "^#Port" "$SSHD_CONFIG"; then
+    sed -i "s/^#Port.*/Port $NEW_PORT/" "$SSHD_CONFIG"
+elif grep -q "^Port" "$SSHD_CONFIG"; then
+    sed -i "s/^Port.*/Port $NEW_PORT/" "$SSHD_CONFIG"
+else
+    echo "Port $NEW_PORT" >> "$SSHD_CONFIG"
+fi
+
+# === Opening a port in UFW (if enabled)===
+if command -v ufw &>/dev/null && ufw status | grep -q "Status: active"; then
+    echo "[SSH] >>> Setting up UFW..."
+    ufw allow "$NEW_PORT"/tcp
+fi
+
+# === Restart SSH ===
+echo "[SSH] >>> Restart ssh..."
+systemctl restart ssh
+echo "[SSH][✓] >>> SSH now listens on port $NEW_PORT"
