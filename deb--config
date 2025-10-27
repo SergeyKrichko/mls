@@ -2,6 +2,7 @@
 # wget https://mls.sk87.top/deb--config && bash deb--config
 # version by 2025-07-29
 # Sergey Krichko
+#################
 
 if [ "$(id -u)" -ne 0 ]; then
     echo "[!] run is not root [!]"

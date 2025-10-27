@@ -1,0 +1,19 @@
+#!/bin/bash
+# wget https://mls.sk87.top/deb--config-ssh && bash deb--config-ssh
+# version by 2025-10-10
+# Sergey Krichko
+#################
+
+apt install git build-essential debhelper -y
+
+mkdir ~/vlmcsd-src
+cd ~/vlmcsd-src
+git clone https://github.com/Wind4/vlmcsd
+cd ~/vlmcsd-src/vlmcsd
+
+git submodule update --init debian
+
+dpkg-buildpackage -rfakeroot -D -us -uc
+
+dpkg -i ./vlmcsd_1113_amd64.deb
+
