@@ -41,13 +41,13 @@ echo "psqlversion  = $psqlversion"
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
-wget --no-check-certificate https://mls.sk87.top/deb-nginx.sh
+wget --no-check-certificate https://mls.sk87.top/deb-nginx
 bash deb-nginx.sh $nginxversion
 
 
-wget --no-check-certificate https://mls.sk87.top/deb-php.sh
+wget --no-check-certificate https://mls.sk87.top/deb-php
 bash deb-php.sh $phpversion
 
 
-wget --no-check-certificate https://mls.sk87.top/deb-postgresql.sh
+wget --no-check-certificate https://mls.sk87.top/deb-postgresql
 bash deb-postgresql.sh $psqlversion
