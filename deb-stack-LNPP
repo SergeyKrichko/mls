@@ -1,6 +1,6 @@
 #!/bin/bash
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
-# wget --no-check-certificate https://mls.sk87.top/deb-LNPP.sh && sudo bash deb-LNPP.sh -ngx -php 8.4 -psql 17
+# wget --no-check-certificate https://mls.sk87.top/deb-stack-LNPP && sudo bash deb-stack-LNPP -ngx -php 8.4 -psql 17
 # version by 2025-11-13
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
