@@ -1,0 +1,53 @@
+#!/bin/bash
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
+# wget --no-check-certificate https://mls.sk87.top/deb-LNPP.sh && sudo bash deb-LNPP.sh -ngx -php 8.4 -psql 17
+# version by 2025-11-13
+# Sergey Krichko
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+# Install lastet NGINX (nginx repository)
+# Значения по умолчанию
+nginxversion=""
+phpversion=""
+psqlversion=""
+
+while [[ $# -gt 0 ]]; do
+  key="$1"
+  case $key in
+    -ngx)
+      nginxversion="$2"
+      shift 2
+      ;;
+    -php)
+      phpversion="$2"
+      shift 2
+      ;;
+    -psql)
+      psqlversion="$2"
+      shift 2
+      ;;
+    *)
+      echo "Ошибка: неизвестный параметр $1"
+      echo "Использование: $0 -ngx <версия> -php <версия> -psql <версия>"
+      exit 1
+      ;;
+  esac
+done
+
+echo "nginxversion = $nginxversion"
+echo "phpversion   = $phpversion"
+echo "psqlversion  = $psqlversion"
+
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+wget --no-check-certificate https://mls.sk87.top/deb-nginx.sh
+bash deb-nginx.sh $nginxversion
+
+
+wget --no-check-certificate https://mls.sk87.top/deb-php.sh
+bash deb-php.sh $phpversion
+
+
+wget --no-check-certificate https://mls.sk87.top/deb-postgresql.sh
+bash deb-postgresql.sh $psqlversion

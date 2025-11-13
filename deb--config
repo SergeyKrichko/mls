@@ -25,17 +25,17 @@ else
 fi
 
 # config-NETSOFT
-wget http://mls.sk87.top/deb--config-netsoft
+wget https://mls.sk87.top/deb--config-netsoft
 bash deb--config-netsoft
 
 # config-NETWORK
-wget http://mls.sk87.top/deb--config-network
+wget https://mls.sk87.top/deb--config-network
 bash deb--config-network
 
 # config-SSH
-wget http://mls.sk87.top/deb--config-ssh
+wget https://mls.sk87.top/deb--config-ssh
 bash deb--config-ssh
 
 # config-NEWUSER
-wget http://mls.sk87.top/deb--config-newuser
+wget https://mls.sk87.top/deb--config-newuser
 bash deb--config-newuser

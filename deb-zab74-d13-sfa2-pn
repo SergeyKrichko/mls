@@ -1,0 +1,20 @@
+#!/bin/bash
+# wget https://mls.sk87.top/zab74-d13-sfa2-pn && bash zab74-d13-sfa2-pn
+# version by 2025-11-12
+# Sergey Krichko
+#################
+
+# 0. [add repo ZABBIX]
+wget https://repo.zabbix.com/zabbix/7.4/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.4+debian13_all.deb
+dpkg -i zabbix-release_latest_7.4+debian13_all.deb
+apt update
+
+# 1. [Install Zabbix server, frontend, agent2]
+apt install zabbix-server-pgsql zabbix-frontend-php php8.4-pgsql zabbix-nginx-conf zabbix-sql-scripts zabbix-agent2
+
+# 2. [Install Zabbix agent 2 plugins]
+apt install zabbix-agent2-plugin-mongodb zabbix-agent2-plugin-mssql zabbix-agent2-plugin-postgresql
+
+# 3. [Create DB]
+sudo -u postgres createuser --pwprompt zabbix
+sudo -u postgres createdb -O zabbix zabbix

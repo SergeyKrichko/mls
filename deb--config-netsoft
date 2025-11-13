@@ -8,9 +8,9 @@
 echo "[SYSTEM] >>> Update and Upgrade"
 sudo apt update -y
 sudo apt upgrade -y
-echo "[SYSTEM][✓] >>> update completed!"
+echo "[SYSTEM][✓] >>> Update and Upgrade completed!"
 
-# 1. [NETSOFT]
-echo "[NETSOFT] >>> Installing network programs..."
+# 1. [CONFIG-NETSOFT]
+echo "[CONFIG-NETSOFT] >>> Installing network programs..."
 apt install -y mtr net-tools htop
-echo "[NETSOFT][✓] >>> Install completed!"
+echo "[CONFIG-NETSOFT][✓] >>> Install completed!"
