@@ -54,7 +54,7 @@ apt update
 #---To install -y nginx, run the following commands:
 echo "-----------------------------------------------------"
 echo "==>>==>>==>> Install NGINX (nginx repository) ->->-> Install NGINX LAST MAIN VERSION:"
-apt install -y nginx $1
+apt install -y nginx=$1
 
 echo "-----------------------------------------------------"
 echo "==>>==>>==>> Install NGINX (nginx repository) ->->-> Configure"
