@@ -35,5 +35,5 @@ else
 
     # === Add group sudo ===
     usermod -aG sudo "$USERNAME"
-    echo "==>>==>>==>> [CONFIG-NEWUSER] >>> sudo [✓] >>> User $USERNAME added to sudo group"
+    echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User $USERNAME added to sudo group"
 fi
