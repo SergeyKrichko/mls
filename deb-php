@@ -43,8 +43,8 @@ apt update
 #---
 echo "-----------------------------------------------------------------"
 echo "==>>==>>==>> Install PHP (https://packages.sury.org/php/) =====>>>>> Install"
-apt install -y php$phpversion-cli php$phpversion-fpm php$phpversion-common
-apt install -y php$phpversion-pgsql php$phpversion-curl php$phpversion-xml \
+apt install -y php$phpversion-cli php$phpversion-fpm php$phpversion-common \
+ php$phpversion-pgsql php$phpversion-curl php$phpversion-xml \
  php$phpversion-dev php$phpversion-imap php$phpversion-redis php$phpversion-apcu php$phpversion-soap \
  php$phpversion-bcmath php$phpversion-bz2 php$phpversion-opcache  php$phpversion-imagick imagemagick \
  php$phpversion-fpm php$phpversion-gd php$phpversion-gmp php$phpversion-intl php$phpversion-mbstring \
