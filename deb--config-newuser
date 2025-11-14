@@ -4,17 +4,25 @@
 # version by 2025-11-14
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
-set -e
+set -euo pipefail
+. /etc/os-release
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
-# 1.[CONFIG-NEWUSER]
+# 0.[SUDO]
+echo "==>>==>>==>> [SUDO] ->->-> Installing..."
+if ! command -v sudo &> /dev/null; then
+    apt install -y sudo
+    echo "==>>==>>==>> [SUDO][✓] ->->-> install completed!"
+else
+    echo "==>>==>>==>> [SUDO][-] ->->-> sudo no installation required"
+fi
+
+# 1.[CONFIG-NEWUSER] Checking if the user exists
 echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> create user..."
 read -p "Insert name new user: " USERNAME
 
-# Checking if the user exists
 if id "$USERNAME" &>/dev/null; then
     echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User '$USERNAME' already exists."
-    usermod -aG sudo "$USERNAME"
-    echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User $USERNAME added to sudo group"
 else
     # === insert password ===
     read -s -p "==>>==>>==>> [CONFIG-NEWUSER] ->->-> Insert password for $USERNAME: " PASSWORD
@@ -34,6 +42,10 @@ else
     echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User $USERNAME created"
 
     # === Add group sudo ===
-    usermod -aG sudo "$USERNAME"
-    echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User $USERNAME added to sudo group"
+    # usermod -aG sudo "$USERNAME"
+    # echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User $USERNAME added to sudo group"
 fi
+
+# 2.[CONFIG-NEWUSER] Add USERNAME to group sudo ===
+usermod -aG sudo "$USERNAME"
+echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User $USERNAME added to sudo group"

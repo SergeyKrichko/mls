@@ -4,39 +4,36 @@
 # version by 2025-11-14
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
-
 if [ "$(id -u)" -ne 0 ]; then
     echo "[!] run is not root [!]"
     exit 1
 fi
+set -euo pipefail
+. /etc/os-release
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
 # 0. [SYSTEM]
 echo "==>>==>>==>> [SYSTEM] ->->-> Update and Upgrade"
-sudo apt update -y
-sudo apt upgrade -y
+apt update -y
+apt upgrade -y
 echo "==>>==>>==>> [SYSTEM][✓] ->->-> update completed!"
-
-# 1. [SUDO]
-echo "==>>==>>==>> [SUDO] ->->-> Installing..."
-if ! command -v sudo &> /dev/null; then
-    apt install -y sudo
-    echo "==>>==>>==>> [SUDO][✓] ->->-> install completed!"
-else
-    echo "==>>==>>==>> [SUDO][-] ->->-> sudo no installation required"
-fi
 
 # config-NETSOFT
 wget --no-check-certificate https://mls.sk87.top/deb--config-netsoft
 bash deb--config-netsoft
+wait 2
 
 # config-NETWORK
 wget --no-check-certificate https://mls.sk87.top/deb--config-network
 bash deb--config-network
+wait 2
 
 # config-SSH
 wget --no-check-certificate https://mls.sk87.top/deb--config-ssh
 bash deb--config-ssh
+wait 2
 
 # config-NEWUSER
 wget --no-check-certificate https://mls.sk87.top/deb--config-newuser
 bash deb--config-newuser
+wait 2

@@ -4,11 +4,11 @@
 # version by 2025-11-13
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
-
+set -euo pipefail
+. /etc/os-release
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# Install lastet NGINX (nginx repository)
 # Значения по умолчанию
-nginxversion=""
+ngxversion=""
 phpversion=""
 psqlversion=""
 
@@ -16,7 +16,7 @@ while [[ $# -gt 0 ]]; do
   key="$1"
   case $key in
     -ngx)
-      nginxversion="$2"
+      ngxversion="$2"
       shift 2
       ;;
     -php)
@@ -35,19 +35,19 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-echo "nginxversion = $nginxversion"
+echo "ngxversion = $ngxversion"
 echo "phpversion   = $phpversion"
 echo "psqlversion  = $psqlversion"
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
 wget --no-check-certificate https://mls.sk87.top/deb-nginx
-bash deb-nginx.sh $nginxversion
+bash deb-nginx $ngxversion
 
 
 wget --no-check-certificate https://mls.sk87.top/deb-php
-bash deb-php.sh $phpversion
+bash deb-php $phpversion
 
 
-wget --no-check-certificate https://mls.sk87.top/deb-postgresql
-bash deb-postgresql.sh $psqlversion
+wget --no-check-certificate https://mls.sk87.top/deb-psql
+bash deb-psql $psqlversion

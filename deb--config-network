@@ -4,10 +4,12 @@
 # version by 2025-11-14
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
+set -euo pipefail
+. /etc/os-release
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
 # 0. [CONFIG-NETWORK]
 echo "==>>==>>==>> [CONFIG-NETWORK] ->->-> START Configuration..."
-set -e
 
 CONFIG_FILE="/etc/network/interfaces"
 

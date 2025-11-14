@@ -3,7 +3,9 @@
 # wget https://mls.sk87.top/deb--config-ssh && bash deb--config-ssh
 # version by 2025-11-14
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
-set -e
+set -euo pipefail
+. /etc/os-release
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
 echo "==>>==>>==>> [CONFIG-SSH] ->->-> Configuration SSH..."
 SSHD_CONFIG="/etc/ssh/sshd_config"
