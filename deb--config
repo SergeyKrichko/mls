@@ -1,8 +1,9 @@
 #!/bin/bash
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 # wget https://mls.sk87.top/deb--config && bash deb--config
-# version by 2025-07-29
+# version by 2025-11-14
 # Sergey Krichko
-#################
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 
 if [ "$(id -u)" -ne 0 ]; then
     echo "[!] run is not root [!]"
@@ -10,32 +11,32 @@ if [ "$(id -u)" -ne 0 ]; then
 fi
 
 # 0. [SYSTEM]
-echo "[SYSTEM] >>> Update and Upgrade"
+echo "==>>==>>==>> [SYSTEM] ->->-> Update and Upgrade"
 sudo apt update -y
 sudo apt upgrade -y
-echo "[SYSTEM][✓] ->->-> update completed!"
+echo "==>>==>>==>> [SYSTEM][✓] ->->-> update completed!"
 
 # 1. [SUDO]
-echo "[SUDO] >>> Installing..."
+echo "==>>==>>==>> [SUDO] ->->-> Installing..."
 if ! command -v sudo &> /dev/null; then
     apt install -y sudo
-    echo "[SUDO][✓] >>> install completed!"
+    echo "==>>==>>==>> [SUDO][✓] ->->-> install completed!"
 else
-    echo "[SUDO][-] >>> sudo no installation required"
+    echo "==>>==>>==>> [SUDO][-] ->->-> sudo no installation required"
 fi
 
 # config-NETSOFT
-wget https://mls.sk87.top/deb--config-netsoft
+wget --no-check-certificate https://mls.sk87.top/deb--config-netsoft
 bash deb--config-netsoft
 
 # config-NETWORK
-wget https://mls.sk87.top/deb--config-network
+wget --no-check-certificate https://mls.sk87.top/deb--config-network
 bash deb--config-network
 
 # config-SSH
-wget https://mls.sk87.top/deb--config-ssh
+wget --no-check-certificate https://mls.sk87.top/deb--config-ssh
 bash deb--config-ssh
 
 # config-NEWUSER
-wget https://mls.sk87.top/deb--config-newuser
+wget --no-check-certificate https://mls.sk87.top/deb--config-newuser
 bash deb--config-newuser

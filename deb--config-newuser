@@ -1,38 +1,39 @@
 #!/bin/bash
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 # wget https://mls.sk87.top/deb--config-newuser && bash deb--config-newuser
-# version by 2025-10-10
+# version by 2025-11-14
 # Sergey Krichko
-#################
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 set -e
 
 # 1.[CONFIG-NEWUSER]
-echo "[CONFIG-NEWUSER] >>> create user..."
+echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> create user..."
 read -p "Insert name new user: " USERNAME
 
 # Checking if the user exists
 if id "$USERNAME" &>/dev/null; then
-    echo "[CONFIG-NEWUSER] >>> add [-] >>> User '$USERNAME' already exists."
+    echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User '$USERNAME' already exists."
     usermod -aG sudo "$USERNAME"
-    echo "[CONFIG-NEWUSER] >>> sudo [✓] >>> User $USERNAME added to sudo group"
+    echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User $USERNAME added to sudo group"
 else
     # === insert password ===
-    read -s -p "[CONFIG-NEWUSER] >>> password >>> Insert password for $USERNAME: " PASSWORD
+    read -s -p "==>>==>>==>> [CONFIG-NEWUSER] ->->-> Insert password for $USERNAME: " PASSWORD
     echo
-    read -s -p "[CONFIG-NEWUSER] >>> password >>> Repeat password: " PASSWORD2
+    read -s -p "==>>==>>==>> [CONFIG-NEWUSER] ->->-> Repeat password: " PASSWORD2
     echo
 
     if [ "$PASSWORD" != "$PASSWORD2" ]; then
-        echo "[CONFIG-NEWUSER] >>> password [!] >>> Passwords do not match. Aborting."
+        echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> [!] Passwords do not match. Aborting."
         exit 1
     fi
 
     # === Create user ===
-    echo "[CONFIG-NEWUSER] >>> add [+] >>> Create user $USERNAME..."
+    echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> Create user $USERNAME..."
     useradd -m -s /bin/bash "$USERNAME"
     echo "$USERNAME:$PASSWORD" | chpasswd
-    echo "[CONFIG-NEWUSER] >>> add [✓] >>> User $USERNAME created"
+    echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User $USERNAME created"
 
     # === Add group sudo ===
     usermod -aG sudo "$USERNAME"
-    echo "[CONFIG-NEWUSER] >>> sudo [✓] >>> User $USERNAME added to sudo group"
+    echo "==>>==>>==>> [CONFIG-NEWUSER] >>> sudo [✓] >>> User $USERNAME added to sudo group"
 fi

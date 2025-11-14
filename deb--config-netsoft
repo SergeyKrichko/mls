@@ -1,16 +1,17 @@
 #!/bin/bash
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 # wget https://mls.sk87.top/deb--config-netsoft && bash deb--config-netsoft
-# version by 2025-10-10
+# version by 2025-11-14
 # Sergey Krichko
-#################
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 
 # 0. [SYSTEM]
-echo "[SYSTEM] >>> Update and Upgrade"
+echo "==>>==>>==>> [SYSTEM] ->->-> Update and Upgrade"
 sudo apt update -y
 sudo apt upgrade -y
-echo "[SYSTEM][✓] >>> Update and Upgrade completed!"
+echo "==>>==>>==>> [SYSTEM][✓] ->->-> Update and Upgrade completed!"
 
 # 1. [CONFIG-NETSOFT]
-echo "[CONFIG-NETSOFT] >>> Installing network programs..."
-apt install -y mtr net-tools htop
-echo "[CONFIG-NETSOFT][✓] >>> Install completed!"
+echo "==>>==>>==>> [CONFIG-NETSOFT] ->->-> Installing network programs..."
+apt install -y mtr net-tools htop sudo
+echo "==>>==>>==>> [CONFIG-NETSOFT][✓] ->->-> Install completed!"

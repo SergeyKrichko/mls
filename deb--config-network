@@ -1,11 +1,12 @@
 #!/bin/bash
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 # wget https://mls.sk87.top/deb--config-network && bash deb--config-network
-# version by 2025-10-10
+# version by 2025-11-14
 # Sergey Krichko
-#################
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 
 # 0. [CONFIG-NETWORK]
-echo "[CONFIG-NETWORK] >>> START Configuration..."
+echo "==>>==>>==>> [CONFIG-NETWORK] ->->-> START Configuration..."
 set -e
 
 CONFIG_FILE="/etc/network/interfaces"
@@ -14,7 +15,7 @@ CONFIG_FILE="/etc/network/interfaces"
 IFACE=$(ip -o -4 route show to default | awk '{print $5}')
 
 # 1. [CONFIG-NETWORK] configuration
-echo "[CONFIG-NETWORK] >>> Interface found: $IFACE"
+echo "==>>==>>==>> [CONFIG-NETWORK] ->->-> Interface found: $IFACE"
 echo "Select network setup type:"
 echo "d) Dynamic (DHCP)"
 echo "s) Static IP"
@@ -24,7 +25,7 @@ read -p "Enter d or s: " MODE
 cp "$CONFIG_FILE" "$CONFIG_FILE.bak"
 
 if [[ "$MODE" == "d" ]]; then
-  echo "[CONFIG-NETWORK] >>> dhcp >>> Configuration..."
+  echo "==>>==>>==>> [CONFIG-NETWORK] ->->-> DHCP Configuration..."
 
   cat > "$CONFIG_FILE" <<EOF
 auto lo
@@ -40,7 +41,7 @@ elif [[ "$MODE" == "s" ]]; then
   read -p "Enter a gateway (e.g. 192.168.1.1): " GATEWAY
   read -p "Enter a DNS server(s) (e.g. 8.8.8 1.1.1.1): " DNS
 
-  echo "[CONFIG-NETWORK] >>> static >>> Setting up a static IP..."
+  echo "==>>==>>==>> [CONFIG-NETWORK] ->->-> Setting up a static IP..."
 
   cat > "$CONFIG_FILE" <<EOF
 auto lo
@@ -55,13 +56,13 @@ iface $IFACE inet static
 EOF
 
 else
-  echo "[CONFIG-NETWORK][!] >>> Without changing network settings. Interruption."
+  echo "==>>==>>==>> [CONFIG-NETWORK][!] ->->-> Without changing network settings. Interruption."
   exit 1
 fi
 
 # Reboot network
-echo "[CONFIG-NETWORK] >>> Restarting the interface $IFACE..."
+echo "==>>==>>==>> [CONFIG-NETWORK] ->->-> Restarting the interface $IFACE..."
 ifdown "$IFACE" && ifup "$IFACE"
 
 # [NETWORK] >>> Network configuration ."
-echo "[CONFIG-NETWORK][✓] >>> Network configuration completed!"
+echo "==>>==>>==>> [CONFIG-NETWORK][✓] ->->-> Network configuration completed!"
