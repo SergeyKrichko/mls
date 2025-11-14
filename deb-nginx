@@ -108,11 +108,12 @@ sudo systemctl start nginx
 #---
 echo "==>>==>>==>> Install NGINX (nginx repository) ->->-> Installed version:"
 sudo nginx -v
-echo "==>>==>>==>>============<<==<<==<<=="
 sleep 3
+echo "==>>==>>==>>============<<==<<==<<=="
+sleep 2
 echo "==>>==>>==>>   NGINX    <<==<<==<<=="
-sleep 3
+sleep 2
 echo "==>>==>>==>> SUCCESSFUL <<==<<==<<=="
-sleep 3
+sleep 2
 echo "==>>==>>==>>============<<==<<==<<=="
-sleep 3
+sleep 4
