@@ -53,8 +53,7 @@ apt install -y php$phpversion-cli php$phpversion-fpm php$phpversion-common \
 
 
 #---
-echo "==>>==>>==>> Install PHP (https://packages.sury.org/php/) =====>>>>> Installed version:"
-php -v
+echo "==>>==>>==>> Install PHP (https://packages.sury.org/php/) =====>>>>> Installed version:" && php -v
 sleep 3
 echo "==>>==>>==>>============<<==<<==<<=="
 sleep 2

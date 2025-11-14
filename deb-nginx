@@ -6,6 +6,7 @@
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 set -euo pipefail
 . /etc/os-release
+ngxversion=$1
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 #===================================================================
 #---------------- Install NGINX (nginx repository) -----------------
@@ -54,7 +55,7 @@ apt update
 #---To install -y nginx, run the following commands:
 echo "-----------------------------------------------------"
 echo "==>>==>>==>> Install NGINX (nginx repository) ->->-> Install NGINX LAST MAIN VERSION:"
-apt install -y nginx=$1
+apt install -y nginx=$ngxversion
 
 echo "-----------------------------------------------------"
 echo "==>>==>>==>> Install NGINX (nginx repository) ->->-> Configure"
@@ -106,8 +107,7 @@ echo "==>>==>>==>> Install NGINX (nginx repository) ->->-> Start NGINX"
 systemctl start nginx
 
 #---
-echo "==>>==>>==>> Install NGINX (nginx repository) ->->-> Installed version:"
-nginx -v
+echo "==>>==>>==>> Install NGINX (nginx repository) ->->-> Installed version:" && nginx -v
 sleep 3
 echo "==>>==>>==>>============<<==<<==<<=="
 sleep 2

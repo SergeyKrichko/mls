@@ -49,8 +49,7 @@ https://apt.postgresql.org/pub/repos/apt $VERSION_CODENAME-pgdg main" \
 apt update
 apt install -y postgresql-$psqlversion
 
-echo "==>>==>>==>> Install POSTGRESQL (postgresql repository) ->->-> Installed version:"
-psql --version
+echo "==>>==>>==>> Install POSTGRESQL (postgresql repository) ->->-> Installed version:" && psql --version
 sleep 3
 echo "==>>==>>==>>============<<==<<==<<=="
 sleep 2
