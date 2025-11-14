@@ -47,12 +47,12 @@ echo "psqlversion  = $psqlversion"
 
 wget --no-check-certificate https://mls.sk87.top/deb-nginx
 bash deb-nginx $ngxversion
-wait 2
+sleep 2
 
 wget --no-check-certificate https://mls.sk87.top/deb-php
 bash deb-php $phpversion
-wait 2
+sleep 2
 
 wget --no-check-certificate https://mls.sk87.top/deb-psql
 bash deb-psql $psqlversion
-wait 2
+sleep 2
