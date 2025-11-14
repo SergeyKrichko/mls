@@ -56,3 +56,16 @@ sleep 2
 wget --no-check-certificate https://mls.sk87.top/deb-php
 bash deb-php $phpversion
 sleep 2
+
+echo "==>>==>>==>> Install POSTGRESQL (postgresql repository) ->->-> Installed version:"
+psql --version
+
+sleep 3
+echo "==>>==>>==>>============<<==<<==<<=="
+sleep 2
+echo "==>>==>>==>> STACK LNPP <<==<<==<<=="
+sleep 2
+echo "==>>==>>==>> SUCCESSFUL <<==<<==<<=="
+sleep 2
+echo "==>>==>>==>>============<<==<<==<<=="
+sleep 4
