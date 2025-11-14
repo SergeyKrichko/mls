@@ -4,12 +4,12 @@
 # version by 2025-11-14
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
-if [ "$(id -u)" -ne 0 ]; then
-    echo "[!] run is not root [!]"
-    exit 1
-fi
 set -euo pipefail
 . /etc/os-release
+if [[ $EUID -ne 0 ]]; then
+    echo "[!] run is not root [!] Run as root: sudo bash $0" >&2
+    exit 1
+fi
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
 # 0. [SYSTEM]

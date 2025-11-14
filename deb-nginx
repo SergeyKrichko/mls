@@ -1,6 +1,6 @@
 #!/bin/bash
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
-# wget --no-check-certificate https://mls.sk87.top/deb-nginx && bash deb-nginx
+# wget --no-check-certificate https://mls.sk87.top/deb-nginx && sudo bash deb-nginx
 # version by 2025-11-13
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
@@ -21,12 +21,14 @@ echo "-----------------------------------------------------"
 echo "==>>==>>==>> Install NGINX (nginx repository) ->->-> install soft:"
 #---Install the prerequisites:
 apt install -y curl gnupg ca-certificates debian-archive-keyring 
+install -d -m 700 /root/.gnupg
 
 echo "-----------------------------------------------------"
 echo "==>>==>>==>> Install NGINX (nginx repository) ->->-> add repository:"
 #---Import an official nginx signing key so apt could verify the packages authenticity. Fetch the key:
-curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
-  | tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
+curl -fsSL https://nginx.org/keys/nginx_signing.key -o /tmp/nginx.asc
+gpg --dearmor -o /usr/share/keyrings/nginx-archive-keyring.gpg /tmp/nginx.asc
+rm -f /tmp/nginx.asc
 
 #---Verify that the downloaded file contains the proper key:
 gpg --dry-run --quiet --no-keyring --import --import-options import-show /usr/share/keyrings/nginx-archive-keyring.gpg
@@ -39,14 +41,12 @@ gpg --dry-run --quiet --no-keyring --import --import-options import-show /usr/sh
 
 #---To set up the apt repository for stable nginx packages, run the following command:
 echo "deb [signed-by=/usr/share/keyrings/nginx-archive-keyring.gpg] \
-http://nginx.org/packages/debian `lsb_release -cs` nginx" \
+http://nginx.org/packages/debian $VERSION_CODENAME nginx" \
   | tee /etc/apt/sources.list.d/nginx.list > /dev/null
- 
+
 #---Set up repository pinning to prefer our packages over distribution-provided ones:
 echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" \
   |  tee /etc/apt/preferences.d/99nginx
-
-#---
 
 echo "-----------------------------------------------------"
 echo "==>>==>>==>> Install NGINX (nginx repository) ->->-> update:"

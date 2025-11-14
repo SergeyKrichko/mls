@@ -6,7 +6,11 @@
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 set -euo pipefail
 . /etc/os-release
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+if [[ $EUID -ne 0 ]]; then
+    echo "[!] run is not root [!] Run as root: sudo bash $0" >&2
+    exit 1
+fi
+
 # Значения по умолчанию
 ngxversion=""
 phpversion=""
@@ -43,11 +47,12 @@ echo "psqlversion  = $psqlversion"
 
 wget --no-check-certificate https://mls.sk87.top/deb-nginx
 bash deb-nginx $ngxversion
-
+wait 2
 
 wget --no-check-certificate https://mls.sk87.top/deb-php
 bash deb-php $phpversion
-
+wait 2
 
 wget --no-check-certificate https://mls.sk87.top/deb-psql
 bash deb-psql $psqlversion
+wait 2
