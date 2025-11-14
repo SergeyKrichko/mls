@@ -1,0 +1,66 @@
+#!/bin/bash
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
+# wget --no-check-certificate https://mls.sk87.top/deb-php && sudo bash deb-php
+# version by 2025-11-14
+# Sergey Krichko
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
+set -euo pipefail
+. /etc/os-release
+if [[ -z "${1:-}" ]]; then
+    echo "Ошибка: не указана версия PHP в $0">&2
+    exit 1
+fi
+phpversion=$1
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+#===============================================================================
+echo "-----------------------------------------------------"
+echo "==>>==>>==>> Install PHP (https://packages.sury.org/php/) ->->-> update && upgrade SYSTEM:"
+# 0. [SYSTEM]
+echo "==>>==>>==>> [SYSTEM]{$VERSION_CODENAME} ->->-> Update and Upgrade"
+apt update -y
+apt upgrade -y
+echo "==>>==>>==>> [SYSTEM][✓] ->->-> update completed!"
+
+#---------------- Install PHP (https://packages.sury.org/php/) -----------------
+echo "-----------------------------------------------------"
+echo "==>>==>>==>> Install PHP (https://packages.sury.org/php/) =====>>>>> version=$phpversion"
+echo "-----------------------------------------------------"
+echo "==>>==>>==>> Install PHP (https://packages.sury.org/php/) =====>>>>> update && upgrade:"
+
+#---
+echo "-----------------------------------------------------------------"
+echo "==>>==>>==>> Install PHP (https://packages.sury.org/php/) =====>>>>> add repository"
+apt -y install ca-certificates curl apt-transport-https
+curl -sSLo /tmp/debsuryorg-archive-keyring.deb https://packages.sury.org/debsuryorg-archive-keyring.deb
+dpkg -i /tmp/debsuryorg-archive-keyring.deb
+sh -c 'echo "deb [signed-by=/usr/share/keyrings/deb.sury.org-php.gpg] https://packages.sury.org/php/ $(lsb_release -sc) main" > /etc/apt/sources.list.d/php.list'
+
+#---
+echo "-----------------------------------------------------------------"
+echo "==>>==>>==>> Install PHP (https://packages.sury.org/php/) =====>>>>> update"
+apt update
+
+#---
+echo "-----------------------------------------------------------------"
+echo "==>>==>>==>> Install PHP (https://packages.sury.org/php/) =====>>>>> Install"
+apt install -y php$phpversion-cli php$phpversion-fpm php$phpversion-common
+apt install -y php$phpversion-pgsql php$phpversion-curl php$phpversion-xml \
+ php$phpversion-dev php$phpversion-imap php$phpversion-redis php$phpversion-apcu php$phpversion-soap \
+ php$phpversion-bcmath php$phpversion-bz2 php$phpversion-opcache  php$phpversion-imagick imagemagick \
+ php$phpversion-fpm php$phpversion-gd php$phpversion-gmp php$phpversion-intl php$phpversion-mbstring \
+ php$phpversion-xmlrpc php$phpversion-zip php$phpversion-memcache php$phpversion-memcached \
+ memcached redis-server
+
+
+#---
+echo "==>>==>>==>> Install PHP (https://packages.sury.org/php/) =====>>>>> Installed version:"
+php -v
+sleep 3
+echo "==>>==>>==>>============<<==<<==<<=="
+sleep 2
+echo "==>>==>>==>>    PHP     <<==<<==<<=="
+sleep 2
+echo "==>>==>>==>> SUCCESSFUL <<==<<==<<=="
+sleep 2
+echo "==>>==>>==>>============<<==<<==<<=="
+sleep 4

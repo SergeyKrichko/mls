@@ -6,6 +6,11 @@
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
 set -euo pipefail
 . /etc/os-release
+if [[ -z "${1:-}" ]]; then
+    echo "Ошибка: не указана версия POSTGRESQL в $0">&2
+    exit 1
+fi
+psqlversion=$1
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 #====================================================================
 #------------------------- install POSGRSQL -------------------------
@@ -37,12 +42,12 @@ rm -f /tmp/postgresql.asc
 
 #---Create /etc/apt/sources.list.d/pgdg.list. The distributions are called codename-pgdg. In the example, replace bookworm with the actual distribution you are using. File contents:
 echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.gpg] \
-https://apt.postgresql.org/pub/repos/apt ${VERSION_CODENAME}-pgdg main" \
+https://apt.postgresql.org/pub/repos/apt $VERSION_CODENAME-pgdg main" \
   > /etc/apt/sources.list.d/pgdg.list
 
 #---Finally, update the package lists, and start installing packages:
 apt update
-apt install -y postgresql-17
+apt install -y postgresql-$psqlversion
 
 echo "==>>==>>==>> Install POSTGRESQL (postgresql repository) ->->-> Installed version:"
 psql --version
