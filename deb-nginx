@@ -1,6 +1,6 @@
 #!/bin/bash
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
-# wget https://mls.sk87.top/deb-nginx && sudo bash deb-nginx
+# wget --no-check-certificate https://mls.sk87.top/deb-nginx && sudo bash deb-nginx
 # version by 2025-11-13
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
@@ -17,10 +17,12 @@ sudo apt upgrade -y
 echo "==>>==>>==>> [SYSTEM][✓] ->->-> update completed!"
 
 echo "-----------------------------------------------------"
-echo "==>>==>>==>> Install NGINX (nginx repository) ->->-> add repository:"
+echo "==>>==>>==>> Install NGINX (nginx repository) ->->-> install soft:"
 #---Install the prerequisites:
 sudo apt install -y curl gnupg2 ca-certificates lsb-release debian-archive-keyring 
 
+echo "-----------------------------------------------------"
+echo "==>>==>>==>> Install NGINX (nginx repository) ->->-> add repository:"
 #---Import an official nginx signing key so apt could verify the packages authenticity. Fetch the key:
 sudo curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor \
   | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
@@ -53,6 +55,7 @@ sudo apt update
 echo "-----------------------------------------------------"
 echo "==>>==>>==>> Install NGINX (nginx repository) ->->-> Install NGINX LAST MAIN VERSION:"
 sudo apt install -y nginx
+
 echo "-----------------------------------------------------"
 echo "==>>==>>==>> Install NGINX (nginx repository) ->->-> Configure"
 
@@ -106,7 +109,10 @@ sudo systemctl start nginx
 echo "==>>==>>==>> Install NGINX (nginx repository) ->->-> Installed version:"
 sudo nginx -v
 echo "==>>==>>==>>============<<==<<==<<=="
+sleep 3
 echo "==>>==>>==>>   NGINX    <<==<<==<<=="
+sleep 3
 echo "==>>==>>==>> SUCCESSFUL <<==<<==<<=="
+sleep 3
 echo "==>>==>>==>>============<<==<<==<<=="
 sleep 3
