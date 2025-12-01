@@ -1,7 +1,7 @@
 #!/bin/bash
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
-# wget --no-check-certificate https://mls.sk87.top/deb-nginx && sudo bash deb-nginx
-# version by 2025-11-13
+# wget --no-check-certificate https://mls.sk87.top/deb-nginx && bash deb-nginx 1.28.0-1~trixie
+# version by 2025-11-14
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 set -euo pipefail

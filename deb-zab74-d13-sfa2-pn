@@ -1,20 +1,64 @@
 #!/bin/bash
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
 # wget https://mls.sk87.top/zab74-d13-sfa2-pn && bash zab74-d13-sfa2-pn
-# version by 2025-11-12
+# version by 2025-11-16
 # Sergey Krichko
-#################
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
+set -euo pipefail
+. /etc/os-release
+# $DBPassword=$1
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
-# 0. [add repo ZABBIX]
+# 0. [SYSTEM]
+echo "==>>==>>==>> [SYSTEM] ->->-> Update and Upgrade"
+apt update -y && apt upgrade -y
+echo "==>>==>>==>> [SYSTEM][✓] ->->-> update completed!"
+
+wget --no-check-certificate https://mls.sk87.top/deb-nginx && bash deb-nginx 1.28.0-1~trixie
+wget --no-check-certificate https://mls.sk87.top/deb-psql && bash deb-psql 18
+
+# 1. [add repo ZABBIX]
 wget https://repo.zabbix.com/zabbix/7.4/release/debian/pool/main/z/zabbix-release/zabbix-release_latest_7.4+debian13_all.deb
 dpkg -i zabbix-release_latest_7.4+debian13_all.deb
 apt update
 
-# 1. [Install Zabbix server, frontend, agent2]
-apt install zabbix-server-pgsql zabbix-frontend-php php8.4-pgsql zabbix-nginx-conf zabbix-sql-scripts zabbix-agent2
+# 2.1. [Install Zabbix server, frontend, agent2]
+apt install -y zabbix-server-pgsql zabbix-frontend-php php8.4-pgsql zabbix-nginx-conf zabbix-sql-scripts zabbix-agent2
 
-# 2. [Install Zabbix agent 2 plugins]
-apt install zabbix-agent2-plugin-mongodb zabbix-agent2-plugin-mssql zabbix-agent2-plugin-postgresql
+# 2.2. [Install Zabbix agent 2 plugins]
+apt install -y zabbix-agent2-plugin-mssql zabbix-agent2-plugin-postgresql
 
-# 3. [Create DB]
+# 3..1 [Create DB]
 sudo -u postgres createuser --pwprompt zabbix
 sudo -u postgres createdb -O zabbix zabbix
+
+# 3.2
+zcat /usr/share/zabbix/sql-scripts/postgresql/server.sql.gz | sudo -u zabbix psql zabbix
+
+# 3.3. Настройте базу данных для Zabbix сервера
+# Отредактируйте файл
+nano /etc/zabbix/zabbix_server.conf
+
+# 4 Start
+systemctl restart zabbix-server zabbix-agent2 nginx php8.4-fpm
+systemctl enable zabbix-server zabbix-agent2 nginx php8.4-fpm
+
+
+
+
+
+
+nano /etc/zabbix/zabbix_server.conf
+
+
+nano /etc/php/8.4/fpm/pool.d//zabbix-php-fpm.conf
+Внутри должны быть строки:
+user = nginx
+group = nginx
+
+listen = /var/run/php/zabbix.sock
+listen.owner = nginx
+listen.allowed_clients = 127.0.0.1
+
+
+nano /usr/share/zabbix/ui/conf/zabbix.conf.php

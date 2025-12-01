@@ -1,0 +1,14 @@
+#!/bin/bash
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
+# wget https://mls.sk87.top/deb-wg && bash deb-wg
+# version by 2025-12-02
+# Sergey Krichko
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
+
+# 0. [SYSTEM]
+echo "==>>==>>==>> [SYSTEM] ->->-> Update and Upgrade"
+apt update -y
+apt upgrade -y
+echo "==>>==>>==>> [SYSTEM][✓] ->->-> update completed!"
+
+apt install wireguard
