@@ -1,7 +1,7 @@
 #!/bin/bash
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
-# wget https://mls.sk87.top/deb--config && bash deb--config
-# version by 2025-11-14
+# https://mls.sk87.top/deb--config
+# mls-deb--config-25-12-13
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 set -euo pipefail
@@ -12,28 +12,69 @@ if [[ $EUID -ne 0 ]]; then
 fi
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
-# 0. [SYSTEM]
-echo "==>>==>>==>> [SYSTEM] ->->-> Update and Upgrade"
-apt update -y
-apt upgrade -y
-echo "==>>==>>==>> [SYSTEM][✓] ->->-> update completed!"
+show_menu() {
+    echo "1) install netsoft $HTOP_STATUS"
+    echo "2) Config network $CURL_STATUS"
+    echo "3) Config ssh $CURL_STATUS"
+    echo "4) Add sudouser  $CURL_STATUS"
+    echo "0) Exit"
+}
+
+while true; do
+    show_menu
+    read choice
+    case $choice in
+        1)
+            if [ "$htop_installed" = false ]; then
+                echo "Установливаем htop..."
+                apt install -y htop
+                htop_installed=true
+            else
+                echo "htop уже установлен."
+            fi
+            ;;
+        2)
+            if [ "$curl_installed" = false ]; then
+                echo "Устанавливаем curl..."
+                apt install -y curl
+                curl_installed=true
+            else
+                echo "curl уже установлен."
+            fi
+            ;;
+        0)
+            echo "Exit."
+            exit 0
+            ;;
+        *)
+            echo "Неверный выбор. Попробуйте ещё раз."
+            ;;
+    esac
+done
+
+
 
 # config-NETSOFT
-wget --no-check-certificate https://mls.sk87.top/deb--config-netsoft
+wget https://mls.sk87.top/deb--config-netsoft
 bash deb--config-netsoft
 wait 2
 
 # config-NETWORK
-wget --no-check-certificate https://mls.sk87.top/deb--config-network
+wget https://mls.sk87.top/deb--config-network
 bash deb--config-network
 wait 2
 
 # config-SSH
-wget --no-check-certificate https://mls.sk87.top/deb--config-ssh
+wget https://mls.sk87.top/deb--config-ssh
 bash deb--config-ssh
 wait 2
 
 # config-NEWUSER
-wget --no-check-certificate https://mls.sk87.top/deb--config-newuser
+wget https://mls.sk87.top/deb--config-newuser
 bash deb--config-newuser
+wait 2
+
+# config-NFTABLES
+wget https://mls.sk87.top/deb--config-nftables
+bash deb--config-nftables
 wait 2

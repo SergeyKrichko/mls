@@ -1,14 +1,14 @@
 #!/bin/bash
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
-# wget https://mls.sk87.top/deb--config-network && bash deb--config-network
-# version by 2025-11-14
+# https://mls.sk87.top/deb--config-network
+# mls-deb--config-network-25-12-13
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 set -euo pipefail
 . /etc/os-release
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
-# 0. [CONFIG-NETWORK]
+# 1. [CONFIG-NETWORK]
 echo "==>>==>>==>> [CONFIG-NETWORK] ->->-> START Configuration..."
 
 CONFIG_FILE="/etc/network/interfaces"
@@ -16,7 +16,7 @@ CONFIG_FILE="/etc/network/interfaces"
 # Get the name of the active interface
 IFACE=$(ip -o -4 route show to default | awk '{print $5}')
 
-# 1. [CONFIG-NETWORK] configuration
+# 2. [CONFIG-NETWORK] configuration
 echo "==>>==>>==>> [CONFIG-NETWORK] ->->-> Interface found: $IFACE"
 echo "Select network setup type:"
 echo "d) Dynamic (DHCP)"

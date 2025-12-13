@@ -1,7 +1,7 @@
 #!/bin/bash
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
-# wget https://mls.sk87.top/deb--config-netsoft && bash deb--config-netsoft
-# version by 2025-11-14
+# https://mls.sk87.top/deb--config-netsoft
+# mls-deb--config-netsoft-25-12-13
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 set -euo pipefail
@@ -10,8 +10,7 @@ set -euo pipefail
 
 # 0. [SYSTEM]
 echo "==>>==>>==>> [SYSTEM] ->->-> Update and Upgrade"
-apt update -y
-apt upgrade -y
+apt update -y && apt upgrade -y
 echo "==>>==>>==>> [SYSTEM][✓] ->->-> Update and Upgrade completed!"
 
 # 1. [CONFIG-NETSOFT]

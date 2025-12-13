@@ -1,0 +1,96 @@
+#!/bin/bash
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
+# https://mls.sk87.top/deb--config-nftables
+# mls-deb--config-nftables-25-12-13
+# Sergey Krichko
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+# 0. [SYSTEM]
+echo "==>>==>>==>> [SYSTEM] ->->-> Update and Upgrade"
+apt update -y && apt upgrade -y
+echo "==>>==>>==>> [SYSTEM][✓] ->->-> update completed!"
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+# >>> nano /etc/nftables.conf с таким содержанием:
+#!/usr/sbin/nft -f
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+# mls-nftables-2025-12-03
+# Sergey Krichko
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+flush ruleset # Очистка текущего набора правил
+
+table inet main {
+    chain main_input {
+        type filter hook input priority 0; policy drop;
+        iif "lo" accept
+        ct state established,related accept
+        log prefix "nft INPUT DROP: " flags all counter
+        include "/etc/nftables-enabled/*.nftmaininput"
+    }
+
+    chain main_output {
+        type filter hook output priority 0; policy accept;
+        include "/etc/nftables-enabled/*.nftmainoutput"
+    }
+
+    chain main_forward {
+        type filter hook forward priority 0; policy drop;
+        include "/etc/nftables-enabled/*.nftmainforward"
+    }
+} 
+
+table ip nat {
+    chain nat_prerouting {
+        type nat hook prerouting priority dstnat;
+        include "/etc/nftables-enabled/*.nftnatprerouting"
+    }
+
+    chain nat_postrouting {
+        type nat hook postrouting priority srcnat;
+        include "/etc/nftables-enabled/*.nftnatpostrouting"
+    }
+}
+
+include "/etc/nftables-enabled/*.nftaddrule"
+
+
+
+# >>> nano /etc/nftables-rule/ssh.nftaddrule
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+# mls-nftables-ssh-nftaddrule-2025-12-03
+# Sergey Krichko
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+add rule inet main main_input tcp dport {$SSH_PORT} accept
+
+ln -s /etc/nftables-rule/ssh.nftaddrule /etc/nftables-enabled/ssh.nftaddrule
+
+
+
+# >>> nano /etc/nftables-rule/icmp.nftaddrule
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+# mls-nftables-icmp-nftaddrule-2025-12-03
+# Sergey Krichko
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+add rule inet main main_input ip protocol icmp accept
+add rule inet main main_input ip6 nexthdr icmpv6 accept
+
+ln -s /etc/nftables-rule/icmp.nftaddrule /etc/nftables-enabled/icmp.nftaddrule
+
+
+
+# >>> nano /etc/nftables-rule/wg0.nftaddrule
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+# mls-nftables-wg0-nftaddrule-2025-12-03
+# Sergey Krichko
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+add rule inet main main_input iifname "ens3" udp dport {$WG0_PORT} accept
+add rule inet main main_forward iifname "wg0" oifname "ens3" accept
+add rule inet main main_forward ct state established,related accept
+add rule ip nat nat_postrouting oifname "ens3" masquerade
+
+ln -s /etc/nftables-rule/wg0.nftaddrule /etc/nftables-enabled/wg0.nftaddrule
+
+
+
+nft -c -f /etc/nftables.conf
+nft -f /etc/nftables.conf
+nft -a list ruleset

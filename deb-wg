@@ -11,4 +11,28 @@ apt update -y
 apt upgrade -y
 echo "==>>==>>==>> [SYSTEM][✓] ->->-> update completed!"
 
-apt install wireguard
+
+apt install wireguard wireguard-tools
+
+
+wg genkey | tee /etc/wireguard/wg0.privatekey | wg pubkey > /etc/wireguard/wg0.publickey
+read -r WG0PRIVATEKEY < /etc/wireguard/wg0.privatekey
+read -r WG0PUBLICKEY < /etc/wireguard/wg0.publickey
+echo "$WG0PRIVATEKEY'
+echo "$WG0PUBLICKEY'
+read -r LISTENPORT = 
+read -r ADDRESS = 192.168.0.1/24
+
+# >>> nano /etc/wireguard/wg0.conf с таким содержанием:
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+# mls-wg0-2025-12-08
+# Sergey Krichko
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
+[Interface]
+PrivateKey = $WG0PRIVATEKEY
+#PublicKey = $WG0PUBLICKEY
+ListenPort = $LISTENPORT
+Address = $ADDRESS
+#PostUp = 
+#PostDown = 
+SaveConfig = true

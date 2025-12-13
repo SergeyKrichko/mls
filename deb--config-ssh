@@ -1,17 +1,17 @@
 #!/bin/bash
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
-# wget https://mls.sk87.top/deb--config-ssh && bash deb--config-ssh
-# version by 2025-11-14
+# https://mls.sk87.top/deb--config-ssh
+# mls-deb--config-ssh-25-12-13
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 set -euo pipefail
 . /etc/os-release
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
 echo "==>>==>>==>> [CONFIG-SSH] ->->-> Configuration SSH..."
-SSHD_CONFIG="/etc/ssh/sshd_config"
+CONFIG_FILE="/etc/ssh/sshd_config"
 
 # Get the current port (default 22 if not specified)
-CURRENT_PORT=$(grep -E "^Port " "$SSHD_CONFIG" | awk '{print $2}' || true)
+CURRENT_PORT=$(grep -E "^Port " "$CONFIG_FILE" | awk '{print $2}' || true)
 if [ -z "$CURRENT_PORT" ]; then
     CURRENT_PORT=22
 fi
@@ -26,14 +26,14 @@ if ! [[ "$NEW_PORT" =~ ^[0-9]+$ ]] || [ "$NEW_PORT" -lt 1 ] || [ "$NEW_PORT" -gt
     exit 1
 fi
 
-# === Changing the port in sshd_config ===
+# === Changing the port in CONFIG_FILE ===
 echo "==>>==>>==>> [CONFIG-SSH] ->->-> Changing the SSH port to $NEW_PORT..."
-if grep -q "^#Port" "$SSHD_CONFIG"; then
-    sed -i "s/^#Port.*/Port $NEW_PORT/" "$SSHD_CONFIG"
-elif grep -q "^Port" "$SSHD_CONFIG"; then
-    sed -i "s/^Port.*/Port $NEW_PORT/" "$SSHD_CONFIG"
+if grep -q "^#Port" "$CONFIG_FILE"; then
+    sed -i "s/^#Port.*/Port $NEW_PORT/" "$CONFIG_FILE"
+elif grep -q "^Port" "$CONFIG_FILE"; then
+    sed -i "s/^Port.*/Port $NEW_PORT/" "$CONFIG_FILE"
 else
-    echo "Port $NEW_PORT" >> "$SSHD_CONFIG"
+    echo "Port $NEW_PORT" >> "$CONFIG_FILE"
 fi
 
 # === Opening a port in UFW (if enabled)===

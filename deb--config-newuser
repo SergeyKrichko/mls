@@ -1,14 +1,18 @@
 #!/bin/bash
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
-# wget https://mls.sk87.top/deb--config-newuser && bash deb--config-newuser
-# version by 2025-11-14
+# https://mls.sk87.top/deb--config-newuser
+# mls-deb--config-newuser-25-12-13
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 set -euo pipefail
 . /etc/os-release
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
-# 0.[SUDO]
+# 0. [SYSTEM]
+echo "==>>==>>==>> [SYSTEM] ->->-> Update and Upgrade"
+apt update -y && apt upgrade -y
+echo "==>>==>>==>> [SYSTEM][✓] ->->-> Update and Upgrade completed!"
+
 echo "==>>==>>==>> [SUDO] ->->-> Installing..."
 if ! command -v sudo &> /dev/null; then
     apt install -y sudo
