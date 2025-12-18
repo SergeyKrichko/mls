@@ -69,3 +69,5 @@ show_menu() {
   echo " 0) Выход"
   echo
 }
+
+show_menu
