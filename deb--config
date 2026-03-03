@@ -1,73 +1,131 @@
 #!/bin/bash
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 # https://mls.sk87.top/deb--config
-# mls-deb--config-25-12-13
+# mls-deb--config-26-03-01
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
+#!/bin/bash
 set -euo pipefail
-. /etc/os-release
+
+# --- Check user ROOT ---
 if [[ $EUID -ne 0 ]]; then
-    echo "[!] run is not root [!] Run as root: sudo bash $0" >&2
-    exit 1
+   echo "[!] run is not root [!]" >&2
+   echo " Run as root: sudo bash $0" >&2
+   exit 1
 fi
 
+. /etc/os-release
+
+# --- 2. ОБНОВЛЕНИЕ СИСТЕМЫ (UPGRADE) ---
+echo -n "Выполнить полное обновление системы? [Y/n]: "
+read -n 1 -r run_upgrade
+echo "" # Перевод строки после -n 1
+
+echo -n "Выполнить полное обновление системы? [y/n]: "
+
+while true; do
+    # -n 1 (один символ), -s (не выводить символ нажатия, выведем сами для контроля)
+    read -n 1 -r -s answer
+    case "$answer" in
+        [Yy]|"") 
+            # Разрешаем Y, y или Enter (пустое значение) для согласия
+            echo "Yes" # Выводим текст ответа для логов
+            echo "[...] Обновление индексов и пакетов (dist-upgrade)..."
+            export DEBIAN_FRONTEND=noninteractive
+            apt-get update && apt-get dist-upgrade -y
+            
+            if [ -f /var/run/reboot-required ]; then
+                echo -e "\n[!] ВНИМАНИЕ: Требуется перезагрузка (reboot)!"
+            fi
+            break # Выход из цикла, идем дальше по скрипту
+            ;;
+        [Nn])
+            echo "No"
+            echo "[*] Обновление пропущено пользователем."
+            break # Выход из цикла, идем дальше по скрипту
+            ;;
+        *)
+            # Игнорируем любые другие клавиши, цикл продолжается
+            ;;
+    esac
+done
+
+# --- 3. ПОДГОТОВКА ИНСТРУМЕНТОВ (DEPENDENCIES) ---
+APT_UPDATED=false
+
+ensure_pkg() {
+    local cmd=$1
+    local pkg=${2:-$1}
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+        echo "[...] Установка необходимой утилиты: $pkg"
+        # Обновляем кэш, только если не делали upgrade выше
+        if [ "$APT_UPDATED" = false ] && [[ "$run_upgrade" =~ ^[Nn]$ ]]; then
+            apt-get update -qq
+            APT_UPDATED=true
+        fi
+        apt-get install -y "$pkg" || { echo "Error: Failed to install $pkg"; exit 1; }
+    fi
+}
+
+# Ставим curl (база для скачивания модулей)
+ensure_pkg "curl"
+
+# --- 4. ФОРМИРОВАНИЕ МЕНЮ (WRAPPER LOGIC) ---
+BASE_URL="https://mls.sk87.top"
+TMP_DIR=$(mktemp -d)
+
+cleanup() {
+    rm -rf "$TMP_DIR"
+    echo -e "\n[*] Temp directory deleted. Exit."
+}
+trap cleanup EXIT
+
 MENU_ITEMS=(
-  "Install netsoft|deb__config_netsoft|https://mls.sk87.top/deb--config-netsoft"
-  "Config network|deb__config_network|https://mls.sk87.top/deb--config-network"
-  "Config ssh|deb__config_ssh|https://mls.sk87.top/deb--config-ssh"
-  "Add sudouser|deb__config_newuser|https://mls.sk87.top/deb--config-newuser"
-  "Install and config nftables|deb__config_nftables|https://mls.sk87.top/deb--config-nftables"
+  "Install netsoft             | deb--config-netsoft"
+  "Config network (Static/DHCP) | deb--config-network"
+  "Config SSH Hardening        | deb--config-ssh"
+  "Add Sudo User               | deb--config-newuser"
 )
+
+while true; do
+    echo -e "\n=========================================="
+    echo "  DEBIAN CONFIGURATOR ( mls.sk87.top )"
+    echo "=========================================="
+    for i in "${!MENU_ITEMS[@]}"; do
+        label=$(echo "${MENU_ITEMS[$i]}" | cut -d'|' -f1 | xargs)
+        printf "%2d) %s\n" $((i+1)) "$label"
+    done
+    echo " 0) Выход"
+    echo "=========================================="
+
+    read -p "Выберите пункт: " choice
+    [[ "$choice" == "0" ]] && exit 0
+
+    if [[ "$choice" =~ ^[0-9]+$ ]] && [ "$choice" -le "${#MENU_ITEMS[@]}" ] && [ "$choice" -gt 0 ]; then
+        idx=$((choice-1))
+        filename=$(echo "${MENU_ITEMS[$idx]}" | cut -d'|' -f2 | xargs)
+        
+        echo -e "\n[>>>] Загрузка модуля: $filename"
+        if curl -s -f "$BASE_URL/$filename" -o "$TMP_DIR/$filename"; then
+            echo "[OK] Запуск..."
+            echo "------------------------------------------"
+            bash "$TMP_DIR/$filename"
+            echo "------------------------------------------"
+        else
+            echo "[!] Ошибка загрузки $filename с сервера." >&2
+        fi
+    else
+        echo "[!] Неверный ввод."
+    fi
+done
+###################################################################################################################################
+TEXTCOLOR='\033[0;32m'
+NC='\033[0m'
+
+#
+
+
+echo -e "${TEXTCOLOR}===> Начало настройки системы...${NC}"
+
+
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-
-# config-NETSOFT
-deb__config_netsoft(){
-wget https://mls.sk87.top/deb--config-netsoft
-bash deb--config-netsoft
-wait 2
-}
-
-# config-NETWORK
-deb__config_network(){
-wget https://mls.sk87.top/deb--config-network
-bash deb--config-network
-wait 2
-}
-
-# config-SSH
-deb__config_ssh(){
-wget https://mls.sk87.top/deb--config-ssh
-bash deb--config-ssh
-wait 2
-}
-
-# config-NEWUSER
-deb__config_newuser(){
-wget https://mls.sk87.top/deb--config-newuser
-bash deb--config-newuser
-wait 2
-}
-
-# config-NFTABLES
-deb__config_nftables(){
-wget https://mls.sk87.top/deb--config-nftables
-bash deb--config-nftables
-wait 2
-}
-
-show_menu() {
-  echo "=============================="
-  echo "       Menu deb--config       "
-  echo "=============================="
-  local i=1 item menu_name menu_func menu_desc
-  for item in "${MENU_ITEMS[@]}"; do
-    IFS='|' read -r menu_name menu_func menu_desc <<< "$item"
-    printf "%2d) %s\n" "$i" "$menu_name"
-    [[ -n "${menu_desc:-}" ]] && printf "    - %s\n" "$menu_desc"
-    i=$((i+1))
-  done
-  echo " 0) Выход"
-  echo
-}
-
-show_menu
