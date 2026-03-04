@@ -96,7 +96,7 @@ while true; do
     echo -n "Выберите пункт (нажмите цифру): "
 
     # Читаем ОДИН символ без ожидания Enter
-    read -n 1 -r -s choice
+    read -n 1 -r -s choice < /dev/tty
     echo "$choice" # Выводим нажатую цифру для наглядности
 
     # 0 - Выход
