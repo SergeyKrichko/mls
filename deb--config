@@ -15,12 +15,8 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 . /etc/os-release
-    read -n 1 -r -s a < /dev/tty
-    read -n 1 -r -s b < /dev/tty
-    echo "a" $a
-    echo "b" $b
-    read -n 1 -r -s c < /dev/tty
-    echo "c" $c
+    read -n 1 -r -s "wait" < /dev/tty
+    
 # --- 2. ОБНОВЛЕНИЕ СИСТЕМЫ (UPGRADE) ---
 echo -n "Выполнить полное обновление системы? [Y/n]: "
 while true; do
