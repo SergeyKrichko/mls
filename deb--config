@@ -15,8 +15,6 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 . /etc/os-release
-    echo "Wait > > >"
-    read -n 1 -r -s wait < /dev/tty
     
 # --- 2. ОБНОВЛЕНИЕ СИСТЕМЫ (UPGRADE) ---
 echo -n "Выполнить полное обновление системы? [Y/n]: "
