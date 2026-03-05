@@ -15,39 +15,38 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 . /etc/os-release
-    
-# --- 2. ОБНОВЛЕНИЕ СИСТЕМЫ (UPGRADE) ---
-echo -n "Выполнить полное обновление системы? [Y/n]: "
+APT_UPDATED=false
+APT_UPGRADED=false
+
+# --- 2. SYSTEM UPGRADE ---
+echo -n "UPGRADE SYSTEM? [Y/n]: "
 while true; do
-    # -n 1 (один символ), -s (не выводить символ нажатия, выведем сами для контроля)
     read -n 1 -r -s answer < /dev/tty
     case "$answer" in
         [Yy]|"") 
-            # Разрешаем Y, y или Enter (пустое значение) для согласия
-            echo "Yes" # Выводим текст ответа для логов
-            echo "[...] Обновление индексов и пакетов (dist-upgrade)..."
+            echo "Yes"
+            echo "[...] UPDATE and UPGRADE (dist-upgrade)..."
             export DEBIAN_FRONTEND=noninteractive
             apt-get update && apt-get dist-upgrade -y
-            
+            APT_UPDATED=true
+            APT_UPGRADED=true
+
             if [ -f /var/run/reboot-required ]; then
-                echo -e "\n[!] ВНИМАНИЕ: Требуется перезагрузка (reboot)!"
+                echo -e "\n[!] WARNING: reboot!"
             fi
-            break # Выход из цикла, идем дальше по скрипту
+            break 
             ;;
         [Nn])
             echo "No"
-            echo "[*] Обновление пропущено пользователем."
-            break # Выход из цикла, идем дальше по скрипту
+            echo "[*] MISSED UPGRADE."
+            break 
             ;;
         *)
-            # Игнорируем любые другие клавиши, цикл продолжается
             ;;
     esac
 done
 
-# --- 3. ПОДГОТОВКА ИНСТРУМЕНТОВ (DEPENDENCIES) ---
-APT_UPDATED=false
-
+# --- 3. DEPENDENCIES ---
 ensure_pkg() {
     local cmd=$1
     local pkg=${2:-$1}
@@ -62,7 +61,7 @@ ensure_pkg() {
     fi
 }
 
-# Ставим curl (база для скачивания модулей)
+# Install curl
 ensure_pkg "curl"
 
 # --- 4. ФОРМИРОВАНИЕ МЕНЮ (WRAPPER LOGIC) ---
