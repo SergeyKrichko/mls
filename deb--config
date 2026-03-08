@@ -8,15 +8,31 @@
 set -euo pipefail
 
 # --- Check user ROOT ---
+die() {
+    echo "[!] $1 [!]" >&2
+    exit 1
+}
+
 if [[ $EUID -ne 0 ]]; then
-   echo "[!] run is not root [!]" >&2
-   echo " Run as root: sudo bash $0" >&2
-   exit 1
+    die "Run is not root"
 fi
 
+#
 . /etc/os-release
+SCRIPT_NAME="${0##*/}"
+SESSION_NAME="${SCRIPT_NAME%.*}"
+export SESSION_DIR=$(mktemp -d -t "${SESSION_NAME}-XXXXXXXXXX")
 APT_UPDATED=false
 APT_UPGRADED=false
+
+#
+cleanup() {
+    rm -rf "$SESSION_DIR"
+}
+trap cleanup EXIT
+
+#
+echo "[*] Session context initialized: $SESSION_DIR"
 
 # --- 2. SYSTEM UPGRADE ---
 echo -n "UPGRADE SYSTEM? [Y/n]: "
@@ -28,9 +44,9 @@ while true; do
             echo "[...] UPDATE and UPGRADE (dist-upgrade)..."
             export DEBIAN_FRONTEND=noninteractive
             apt-get update && apt-get dist-upgrade -y
-            APT_UPDATED=true
             APT_UPGRADED=true
-
+            APT_UPDATED=true
+            
             if [ -f /var/run/reboot-required ]; then
                 echo -e "\n[!] WARNING: reboot!"
             fi
@@ -51,9 +67,9 @@ ensure_pkg() {
     local cmd=$1
     local pkg=${2:-$1}
     if ! command -v "$cmd" >/dev/null 2>&1; then
-        echo "[...] Установка необходимой утилиты: $pkg"
+        echo "[...] Install: $pkg"
         # Обновляем кэш, только если не делали upgrade выше
-        if [ "$APT_UPDATED" = false ] && [[ "$run_upgrade" =~ ^[Nn]$ ]]; then
+        if [ "$APT_UPDATED" = false ]; then
             apt-get update -qq
             APT_UPDATED=true
         fi
@@ -68,17 +84,13 @@ ensure_pkg "curl"
 BASE_URL="https://mls.sk87.top"
 TMP_DIR=$(mktemp -d)
 
-cleanup() {
-    rm -rf "$TMP_DIR"
-    echo -e "\n[*] Temp directory deleted. Exit."
-}
-trap cleanup EXIT
+
 
 MENU_ITEMS=(
-  "Install netsoft             | deb--config-netsoft"
+  "Install netsoft              | deb--config-netsoft"
   "Config network (Static/DHCP) | deb--config-network"
-  "Config SSH Hardening        | deb--config-ssh"
-  "Add Sudo User               | deb--config-newuser"
+  "Config SSH Hardening         | deb--config-ssh"
+  "Add Sudo User                | deb--config-newuser"
 )
 
 while true; do
@@ -125,3 +137,19 @@ NC='\033[0m'
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+if [[ $EUID -ne 0 ]]; then
+
+   echo "[!] run is not root [!]" >&2
+
+   echo " Run as root: sudo bash $0" >&2
+
+   exit 1
+
+fi
+
+или
+
+[[ $EUID -ne 0 ]] && echo "[!] Run as root" >&2 && exit 1
+
+
