@@ -20,7 +20,11 @@ fi
 #
 . /etc/os-release
 SCRIPT_NAME="${0##*/}"
-SESSION_NAME="${SCRIPT_NAME%.*}"
+if [[ "$SCRIPT_NAME" == "bash" || -z "$SCRIPT_NAME" ]]; then
+    SESSION_NAME="http-deb--config"
+else
+    SESSION_NAME="${SCRIPT_NAME%.*}" # Убираем расширение
+fi
 export SESSION_DIR=$(mktemp -d -t "${SESSION_NAME}-XXXXXXXXXX")
 APT_UPDATED=false
 APT_UPGRADED=false
