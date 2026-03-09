@@ -32,6 +32,8 @@ RED='\e[31m'
 GREEN='\e[32m'
 YELLOW='\e[33m'
 BLUE='\e[34m'
+CYAN='\e[36m'
+AQUA='\e[1;36m'
 NC='\e[0m'
 color_text() {
     local color=$1
@@ -44,7 +46,7 @@ cleanup() {
 }
 trap cleanup EXIT
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-color_text "$BLUE" "[✓] Session context initialized: $SESSION_DIR"
+color_text "$CYAN" "[✓] Session context initialized: $SESSION_DIR"
 
 # --- 2. SYSTEM UPGRADE ---
 echo -n "UPGRADE SYSTEM? [Y/n]: "
@@ -139,3 +141,4 @@ while true; do
         echo -e "\n[!] Неверный выбор: '$choice'. Используйте цифры 0-${#MENU_ITEMS[@]}."
     fi
 done
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
