@@ -17,7 +17,7 @@ if [[ $EUID -ne 0 ]]; then
     die "Run is not root"
 fi
 
-#
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 . /etc/os-release
 RAW_NAME="raw--deb--config"
 SCRIPT_NAME="${0##*/}"
@@ -28,14 +28,23 @@ else
 fi
 export SESSION_DIR=$(mktemp -d -t "${SESSION_NAME}-XXXXXXXXXX")
 
+RED='\e[31m'
+GREEN='\e[32m'
+YELLOW='\e[33m'
+BLUE='\e[34m'
+NC='\e[0m' # No Color
+color_text() {
+    local color=$1
+    shift
+    echo -e "${color}$*${NC}"
+
 #
 cleanup() {
     rm -rf "$SESSION_DIR"
 }
 trap cleanup EXIT
-
-#
-echo "[*] Session context initialized: $SESSION_DIR"
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+echo "[✓] Session context initialized: $SESSION_DIR"
 
 # --- 2. SYSTEM UPGRADE ---
 echo -n "UPGRADE SYSTEM? [Y/n]: "
@@ -48,7 +57,7 @@ while true; do
             apt-get update && apt-get dist-upgrade -y
             echo "$(date +%T) $SESSION_NAME" > "$SESSION_DIR/apt_updated"
             if [[ -f /run/reboot-required ]]; then
-                 echo -e "\n\e[33m[!] WARNING: System reboot is required to apply updates!\e[0m"
+                 color_text "$RED" "[!!!] WARNING: System reboot is required to apply updates!"
                  if [[ -f /run/reboot-required.pkgs ]]; then
                      echo "[*] Packages requiring reboot:"
                      sed 's/^/    - /' /run/reboot-required.pkgs
@@ -65,35 +74,25 @@ while true; do
     esac
 done
 
-smart_update() {
-    if [[ -f "${SESSION_DIR:-}/apt_updated" ]]; then
-        return 0
-    fi
-    apt-get update -qq && touch "$SESSION_DIR/apt_updated"
-}
-
 # --- 3. DEPENDENCIES ---
-ensure_pkg() {
+install_pkg() {
     local cmd=$1
     local pkg=${2:-$1}
     if ! command -v "$cmd" >/dev/null 2>&1; then
         echo "[+] Install: $pkg"
         if [ "$APT_UPDATED" = false ]; then
             apt-get update -qq
-            echo "$(date +%T) ensure_pkg "curl"" > "$SESSION_DIR/apt_updated"
+            echo "$(date +%T) install_pkg $cmd" > "$SESSION_DIR/apt_updated"
         fi
         apt-get install -y "$pkg" || { echo "Error: Failed to install $pkg"; exit 1; }
     fi
 }
 
 # Install curl
-ensure_pkg "curl"
+install_pkg "curl"
 
-# --- 4. ФОРМИРОВАНИЕ МЕНЮ (WRAPPER LOGIC) ---
+# --- 4. WRAPPER LOGIC ---
 BASE_URL="https://mls.sk87.top"
-TMP_DIR=$(mktemp -d)
-
-
 
 MENU_ITEMS=(
   "Install netsoft              | deb--config-netsoft"
@@ -128,10 +127,10 @@ while true; do
         filename=$(echo "${MENU_ITEMS[$idx]}" | cut -d'|' -f2 | xargs)
         
         echo -e "\n[>>>] Загрузка модуля: $filename"
-        if curl -s -f "$BASE_URL/$filename" -o "$TMP_DIR/$filename"; then
+        if curl -s -f "$BASE_URL/$filename" -o "$SESSION_DIR/$filename"; then
             echo "[OK] Запуск модуля..."
             echo "------------------------------------------"
-            bash "$TMP_DIR/$filename"
+            bash "$SESSION_DIR/$filename"
             echo "------------------------------------------"
         else
             echo "[!] Ошибка: Файл $filename не найден на сервере." >&2
@@ -141,28 +140,4 @@ while true; do
     fi
 done
 
-TEXTCOLOR='\033[0;32m'
-NC='\033[0m'
-
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-
-if [[ $EUID -ne 0 ]]; then
-
-   echo "[!] run is not root [!]" >&2
-
-   echo " Run as root: sudo bash $0" >&2
-
-   exit 1
-
-fi
-
-или
-
-[[ $EUID -ne 0 ]] && echo "[!] Run as root" >&2 && exit 1
-
-
-
-
-
-
