@@ -32,12 +32,12 @@ RED='\e[31m'
 GREEN='\e[32m'
 YELLOW='\e[33m'
 BLUE='\e[34m'
-NC='\e[0m' # No Color
+NC='\e[0m'
 color_text() {
     local color=$1
     shift
     echo -e "${color}$*${NC}"
-
+}
 #
 cleanup() {
     rm -rf "$SESSION_DIR"
