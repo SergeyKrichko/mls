@@ -104,16 +104,16 @@ MENU_ITEMS=(
 )
 
 while true; do
-    echo -e "\n=========================================="
-    echo "  DEBIAN CONFIGURATOR ( mls.sk87.top )"
-    echo "=========================================="
+    color_text "$CYAN" "=========================================="
+    color_text "$CYAN" "  DEBIAN CONFIGURATOR ( mls.sk87.top )"
+    color_text "$CYAN" "=========================================="
     
     for i in "${!MENU_ITEMS[@]}"; do
         label=$(echo "${MENU_ITEMS[$i]}" | cut -d'|' -f1 | xargs)
         printf "%d) %s\n" $((i+1)) "$label"
     done
     echo "0) Выход"
-    echo "=========================================="
+    color_text "$CYAN" "=========================================="
     echo -n "Выберите пункт (нажмите цифру): "
 
     # Читаем ОДИН символ без ожидания Enter
