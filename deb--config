@@ -107,20 +107,15 @@ while true; do
     color_text "$CYAN" "=========================================="
     color_text "$CYAN" "  DEBIAN CONFIGURATOR ( mls.sk87.top )"
     color_text "$CYAN" "=========================================="
-    
     for i in "${!MENU_ITEMS[@]}"; do
         label=$(echo "${MENU_ITEMS[$i]}" | cut -d'|' -f1 | xargs)
-        printf "%d) %s\n" $((i+1)) "$label"
+        color_text "$CYAN" "$((i+1))) $label"
     done
-    echo "0) Выход"
+    color_text "$CYAN" "0) Выход"
     color_text "$CYAN" "=========================================="
-    echo -n "Выберите пункт (нажмите цифру): "
-
-    # Читаем ОДИН символ без ожидания Enter
+    color_text "$CYAN" "Выберите пункт (нажмите цифру): "
     read -n 1 -r -s choice < /dev/tty
-    echo "$choice" # Выводим нажатую цифру для наглядности
-
-    # 0 - Выход
+    color_text "$CYAN" "$choice"
     [[ "$choice" == "0" ]] && exit 0
 
     # Проверка: является ли нажатая клавиша цифрой и попадает ли в диапазон меню
