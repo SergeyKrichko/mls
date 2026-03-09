@@ -80,7 +80,7 @@ ensure_pkg() {
         echo "[+] Install: $pkg"
         if [ "$APT_UPDATED" = false ]; then
             apt-get update -qq
-            date +%T > "$SESSION_DIR/apt_updated"
+            echo "$(date +%T) ensure_pkg "curl"" > "$SESSION_DIR/apt_updated"
         fi
         apt-get install -y "$pkg" || { echo "Error: Failed to install $pkg"; exit 1; }
     fi
