@@ -19,15 +19,14 @@ fi
 
 #
 . /etc/os-release
+RAW_NAME="raw--deb--config"
 SCRIPT_NAME="${0##*/}"
 if [[ "$SCRIPT_NAME" == "bash" || -z "$SCRIPT_NAME" ]]; then
-    SESSION_NAME="http-deb--config"
+    SESSION_NAME=$RAW_NAME
 else
-    SESSION_NAME="${SCRIPT_NAME%.*}" # Убираем расширение
+    SESSION_NAME="${SCRIPT_NAME%.*}"
 fi
 export SESSION_DIR=$(mktemp -d -t "${SESSION_NAME}-XXXXXXXXXX")
-APT_UPDATED=false
-APT_UPGRADED=false
 
 #
 cleanup() {
@@ -44,21 +43,21 @@ while true; do
     read -n 1 -r -s answer < /dev/tty
     case "$answer" in
         [Yy]|"") 
-            echo "Yes"
-            echo "[...] UPDATE and UPGRADE (dist-upgrade)..."
+            echo "[+] UPDATE and UPGRADE (dist-upgrade)..."
             export DEBIAN_FRONTEND=noninteractive
             apt-get update && apt-get dist-upgrade -y
-            APT_UPGRADED=true
-            APT_UPDATED=true
-            
-            if [ -f /var/run/reboot-required ]; then
-                echo -e "\n[!] WARNING: reboot!"
+            echo "$(date +%T) $SESSION_NAME" > "$SESSION_DIR/apt_updated"
+            if [[ -f /run/reboot-required ]]; then
+                 echo -e "\n\e[33m[!] WARNING: System reboot is required to apply updates!\e[0m"
+                 if [[ -f /run/reboot-required.pkgs ]]; then
+                     echo "[*] Packages requiring reboot:"
+                     sed 's/^/    - /' /run/reboot-required.pkgs
+                 fi
             fi
             break 
             ;;
         [Nn])
-            echo "No"
-            echo "[*] MISSED UPGRADE."
+            echo "[-] MISSED UPGRADE."
             break 
             ;;
         *)
@@ -66,16 +65,22 @@ while true; do
     esac
 done
 
+smart_update() {
+    if [[ -f "${SESSION_DIR:-}/apt_updated" ]]; then
+        return 0
+    fi
+    apt-get update -qq && touch "$SESSION_DIR/apt_updated"
+}
+
 # --- 3. DEPENDENCIES ---
 ensure_pkg() {
     local cmd=$1
     local pkg=${2:-$1}
     if ! command -v "$cmd" >/dev/null 2>&1; then
-        echo "[...] Install: $pkg"
-        # Обновляем кэш, только если не делали upgrade выше
+        echo "[+] Install: $pkg"
         if [ "$APT_UPDATED" = false ]; then
             apt-get update -qq
-            APT_UPDATED=true
+            date +%T > "$SESSION_DIR/apt_updated"
         fi
         apt-get install -y "$pkg" || { echo "Error: Failed to install $pkg"; exit 1; }
     fi
@@ -155,5 +160,9 @@ fi
 или
 
 [[ $EUID -ne 0 ]] && echo "[!] Run as root" >&2 && exit 1
+
+
+
+
 
 
