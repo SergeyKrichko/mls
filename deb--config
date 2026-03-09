@@ -44,7 +44,7 @@ cleanup() {
 }
 trap cleanup EXIT
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-echo "[✓] Session context initialized: $SESSION_DIR"
+color_text "$BLUE" "[✓] Session context initialized: $SESSION_DIR"
 
 # --- 2. SYSTEM UPGRADE ---
 echo -n "UPGRADE SYSTEM? [Y/n]: "
