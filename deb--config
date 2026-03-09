@@ -113,7 +113,7 @@ while true; do
     done
     color_text "$CYAN" "0) Выход"
     color_text "$CYAN" "=========================================="
-    color_text "$CYAN" "Выберите пункт (нажмите цифру): "
+    color_text "$CYAN" "Выберите пункт (нажмите цифру): \c"
     read -n 1 -r -s choice < /dev/tty
     color_text "$CYAN" "$choice"
     [[ "$choice" == "0" ]] && exit 0
