@@ -4,7 +4,6 @@
 # mls-deb--config-26-03-01
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
-#!/bin/bash
 set -euo pipefail
 
 # --- Check user ROOT ---
@@ -18,32 +17,11 @@ if [[ $EUID -ne 0 ]]; then
 fi
 
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-. /etc/os-release
+[[ "$DEB_LIB_STATUS" == "loaded" ]] || source <(curl -sL https://mls.sk87.top/deb--lib) || { echo "Library load failed"; exit 1; }
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+source /etc/os-release
 RAW_NAME="raw--deb--config"
-SCRIPT_NAME="${0##*/}"
-if [[ "$SCRIPT_NAME" == "bash" || -z "$SCRIPT_NAME" ]]; then
-    SESSION_NAME=$RAW_NAME
-else
-    SESSION_NAME="${SCRIPT_NAME%.*}"
-fi
-export SESSION_DIR=$(mktemp -d -t "${SESSION_NAME}-XXXXXXXXXX")
-
-RED='\e[31m'
-GREEN='\e[32m'
-YELLOW='\e[33m'
-BLUE='\e[34m'
-CYAN='\e[36m'
-AQUA='\e[1;36m'
-NC='\e[0m'
-color_text() {
-    local color=$1
-    shift
-    echo -e "${color}$*${NC}"
-}
-#
-cleanup() {
-    rm -rf "$SESSION_DIR"
-}
+setup_session $RAW_NAME
 trap cleanup EXIT
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 color_text "$CYAN" "[✓] Session context initialized: $SESSION_DIR"

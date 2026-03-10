@@ -1,0 +1,68 @@
+#!/bin/bash
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
+# https://mls.sk87.top/deb--lib
+# mls-deb--lib-26-03-10
+# Sergey Krichko
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
+RED='\e[31m'
+GREEN='\e[32m'
+YELLOW='\e[33m'
+BLUE='\e[34m'
+CYAN='\e[36m'
+AQUA='\e[1;36m'
+NC='\e[0m'
+color_text() {
+    local color=$1
+    shift
+    echo -e "${color}$*${NC}"
+}
+
+install_pkg() {
+    local cmd=$1
+    local pkg=${2:-$1}
+    if ! command -v "$cmd" >/dev/null 2>&1; then
+        echo -e "${CYAN}[+] Install: $pkg${NC}"
+        apt-get update -qq && apt-get install -y "$pkg"
+
+    fi
+}
+
+setup_session() {
+    local RAW_NAME="${1:-raw-session-name}"
+    local SCRIPT_NAME="${0##*/}"
+    local SESSION_NAME
+
+    if [[ "$SCRIPT_NAME" == "bash" || -z "$SCRIPT_NAME" ]]; then
+        SESSION_NAME=$RAW_NAME
+    else
+        SESSION_NAME="${SCRIPT_NAME%.*}"
+    fi
+    export SESSION_DIR=$(mktemp -d -t "${SESSION_NAME}-XXXXXXXXXX")
+    if [[ ! -d "$SESSION_DIR" ]]; then
+        color_text "$RED" "Критическая ошибка: Не удалось создать SESSION_DIR" >&2
+        return 1
+    fi
+}
+
+check_deb_lib() {
+    if [[ "$DEB_LIB_STATUS" == "loaded" ]]; then
+        return 0
+    fi
+    source <(curl -sL https://mls.sk87.top/deb--lib)
+    export DEB_LIB_STATUS = "loaded"
+}
+
+cleanup() {
+    rm -rf "$SESSION_DIR"
+}
+
+
+export -f install_pkg
+export -f color_text
+export -f setup_session
+export -f check_deb_lib
+export -f cleanup
+export -f 
+export -f 
+export -f 
+export -f 
