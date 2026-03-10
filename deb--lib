@@ -33,9 +33,9 @@ setup_session() {
     local SESSION_NAME
 
     if [[ "$SCRIPT_NAME" == "bash" || -z "$SCRIPT_NAME" ]]; then
-        SESSION_NAME=$RAW_NAME
+        export SESSION_NAME=$RAW_NAME
     else
-        SESSION_NAME="${SCRIPT_NAME%.*}"
+        export SESSION_NAME="${SCRIPT_NAME%.*}"
     fi
     export SESSION_DIR=$(mktemp -d -t "${SESSION_NAME}-XXXXXXXXXX")
     if [[ ! -d "$SESSION_DIR" ]]; then
