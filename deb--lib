@@ -30,7 +30,7 @@ install_pkg() {
 setup_session() {
     local RAW_NAME="${1:-raw-session-name}"
     local SCRIPT_NAME="${0##*/}"
-    local SESSION_NAME
+    local SESSION_NAME=""
 
     if [[ "$SCRIPT_NAME" == "bash" || -z "$SCRIPT_NAME" ]]; then
         export SESSION_NAME=$RAW_NAME
