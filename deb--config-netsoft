@@ -5,15 +5,17 @@
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 set -euo pipefail
-. /etc/os-release
+source /etc/os-release
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
 # 0. [SYSTEM]
-echo "==>>==>>==>> [SYSTEM] ->->-> Update and Upgrade"
+color_text "$GREEN" "==>>==>>==>> [SYSTEM] ->->-> Update and Upgrade"
 apt update -y && apt upgrade -y
-echo "==>>==>>==>> [SYSTEM][✓] ->->-> Update and Upgrade completed!"
+color_text "$GREEN" "==>>==>>==>> [SYSTEM][✓] ->->-> Update and Upgrade completed!"
 
 # 1. [CONFIG-NETSOFT]
-echo "==>>==>>==>> [CONFIG-NETSOFT] ->->-> Installing network programs..."
-apt install -y mtr net-tools htop
-echo "==>>==>>==>> [CONFIG-NETSOFT][✓] ->->-> Install completed!"
+color_text "$GREEN" "==>>==>>==>> [CONFIG-NETSOFT] ->->-> Installing network programs..."
+install_pkg "mtr"
+install_pkg "net-tools"
+install_pkg "htop"
+color_text "$GREEN" "==>>==>>==>> [CONFIG-NETSOFT][✓] ->->-> Install completed!"
