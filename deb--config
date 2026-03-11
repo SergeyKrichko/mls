@@ -15,15 +15,13 @@ if [[ $EUID -ne 0 ]]; then
     die "Run is not root"
 fi
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-source <(curl -sL https://mls.sk87.top/deb--lib)
-check_deb_lib
-# if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
-#     if ! source <(curl -sL https://mls.sk87.top/deb--lib); then
-#         echo "Error: Library load failed from mls.sk87.top" >&2
-#         exit 1
-#     fi
-#     echo -e "${CYAN}[✓] deb--lib >>> loaded${NC}"
-# fi
+if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
+    if source <(curl -sL https://mls.sk87.top/deb--lib); then
+    else
+        echo "not loaded deb--lib" >&2
+        return 0
+    fi
+fi
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 source /etc/os-release
 RAW_NAME="raw--deb--config"
