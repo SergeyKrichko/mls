@@ -7,7 +7,15 @@
 set -euo pipefail
 source /etc/os-release
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-
+if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
+    if ! source <(curl -sL https://mls.sk87.top/deb--lib); then
+        echo "Error: Library load failed from mls.sk87.top" >&2
+        return
+    fi
+    echo -e "${CYAN}[✓] deb--lib >>> loaded${NC}"
+    
+fi
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # 0. [SYSTEM]
 color_text "$GREEN" "==>>==>>==>> [SYSTEM] ->->-> Update and Upgrade"
 apt update -y && apt upgrade -y

