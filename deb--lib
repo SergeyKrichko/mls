@@ -33,10 +33,11 @@ setup_session() {
     local SESSION_NAME
 
     if [[ "$SCRIPT_NAME" == "bash" || -z "$SCRIPT_NAME" ]]; then
-        export SESSION_NAME=$RAW_NAME
+        SESSION_NAME=$RAW_NAME
     else
-        export SESSION_NAME="${SCRIPT_NAME%.*}"
+        SESSION_NAME="${SCRIPT_NAME%.*}"
     fi
+    export SESSION_NAME
     export SESSION_DIR=$(mktemp -d -t "${SESSION_NAME}-XXXXXXXXXX")
     if [[ ! -d "$SESSION_DIR" ]]; then
         color_text "$RED" "Критическая ошибка: Не удалось создать SESSION_DIR" >&2
@@ -62,7 +63,3 @@ export -f color_text
 export -f setup_session
 export -f check_deb_lib
 export -f cleanup
-export -f 
-export -f 
-export -f 
-export -f 
