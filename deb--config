@@ -14,11 +14,12 @@ die() {
 if [[ $EUID -ne 0 ]]; then
     die "Run is not root"
 fi
+COLOR_SCRIPT=$CYAN
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
     if source <(curl -sL https://mls.sk87.top/deb--lib); then
         export DEB_LIB_STATUS = "loaded"
-        color_text "$CYAN" "[✓] deb--lib LOADED"
+        color_text "$COLOR_SCRIPT" "[✓] deb--lib LOADED"
     else
         echo "ERROR: not loaded deb--lib" >&2
         exit 1
@@ -30,7 +31,7 @@ RAW_NAME="raw--deb--config"
 setup_session $RAW_NAME
 trap cleanup EXIT
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-color_text "$CYAN" "[✓] Session context initialized: $SESSION_DIR"
+color_text "$COLOR_SCRIPT" "[✓] Session context initialized: $SESSION_DIR"
 
 # --- 2. SYSTEM UPGRADE ---
 echo -n "UPGRADE SYSTEM? [Y/n]: "
@@ -88,18 +89,18 @@ MENU_ITEMS=(
 )
 
 while true; do
-    color_text "$CYAN" "=========================================="
-    color_text "$CYAN" "  DEBIAN CONFIGURATOR ( mls.sk87.top )"
-    color_text "$CYAN" "=========================================="
+    color_text "$COLOR_SCRIPT" "=========================================="
+    color_text "$COLOR_SCRIPT" "  DEBIAN CONFIGURATOR ( mls.sk87.top )"
+    color_text "$COLOR_SCRIPT" "=========================================="
     for i in "${!MENU_ITEMS[@]}"; do
         label=$(echo "${MENU_ITEMS[$i]}" | cut -d'|' -f1 | xargs)
-        color_text "$CYAN" "$((i+1))) $label"
+        color_text "$COLOR_SCRIPT" "$((i+1))) $label"
     done
-    color_text "$CYAN" "0) Выход"
-    color_text "$CYAN" "=========================================="
-    color_text "$CYAN" "Выберите пункт (нажмите цифру): \c"
+    color_text "$COLOR_SCRIPT" "0) Выход"
+    color_text "$COLOR_SCRIPT" "=========================================="
+    color_text "$COLOR_SCRIPT" "Выберите пункт (нажмите цифру): \c"
     read -n 1 -r -s choice < /dev/tty
-    color_text "$CYAN" "$choice"
+    color_text "$COLOR_SCRIPT" "$choice"
     [[ "$choice" == "0" ]] && exit 0
 
     # Проверка: является ли нажатая клавиша цифрой и попадает ли в диапазон меню

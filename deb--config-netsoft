@@ -6,11 +6,12 @@
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 set -euo pipefail
 source /etc/os-release
+COLOR_SCRIPT=$GREEN
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
     if source <(curl -sL https://mls.sk87.top/deb--lib); then
         export DEB_LIB_STATUS = "loaded"
-        color_text "$CYAN" "[✓] deb--lib LOADED"
+        color_text "$COLOR_SCRIPT" "[✓] deb--lib LOADED"
     else
         echo "ERROR: not loaded deb--lib" >&2
         exit 1
@@ -19,13 +20,13 @@ fi
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
 # 0. [SYSTEM]
-color_text "$GREEN" "==>>==>>==>> [SYSTEM] ->->-> Update and Upgrade"
+color_text "$COLOR_SCRIPT" "==>>==>>==>> [SYSTEM] ->->-> Update and Upgrade"
 apt update -y && apt upgrade -y
-color_text "$GREEN" "==>>==>>==>> [SYSTEM][✓] ->->-> Update and Upgrade completed!"
+color_text "$COLOR_SCRIPT" "==>>==>>==>> [SYSTEM][✓] ->->-> Update and Upgrade completed!"
 
 # 1. [CONFIG-NETSOFT]
-color_text "$GREEN" "==>>==>>==>> [CONFIG-NETSOFT] ->->-> Installing network programs..."
+color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETSOFT] ->->-> Installing network programs..."
 install_pkg "mtr"
 install_pkg "net-tools"
 install_pkg "htop"
-color_text "$GREEN" "==>>==>>==>> [CONFIG-NETSOFT][✓] ->->-> Install completed!"
+color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETSOFT][✓] ->->-> Install completed!"
