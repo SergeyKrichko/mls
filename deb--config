@@ -22,7 +22,7 @@ if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
         color_text "$COLOR_SCRIPT" "[✓] deb--lib LOADED"
     else
         echo "ERROR: not loaded deb--lib" >&2
-        exit 1
+        return 1
     fi
     else
     COLOR_SCRIPT=$CYAN
@@ -62,20 +62,6 @@ while true; do
             ;;
     esac
 done
-
-# --- 3. DEPENDENCIES ---
-install_pkg() {
-    local cmd=$1
-    local pkg=${2:-$1}
-    if ! command -v "$cmd" >/dev/null 2>&1; then
-        echo "[+] Install: $pkg"
-        if [ "$APT_UPDATED" = false ]; then
-            apt-get update -qq
-            echo "$(date +%T) install_pkg $cmd" > "$SESSION_DIR/apt_updated"
-        fi
-        apt-get install -y "$pkg" || { echo "Error: Failed to install $pkg"; exit 1; }
-    fi
-}
 
 # Install curl
 install_pkg "curl"

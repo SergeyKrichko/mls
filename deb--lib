@@ -21,9 +21,15 @@ install_pkg() {
     local cmd=$1
     local pkg=${2:-$1}
     if ! command -v "$cmd" >/dev/null 2>&1; then
-        echo -e "${CYAN}[+] Install: $pkg${NC}"
-        apt-get update -qq && apt-get install -y "$pkg"
-
+        color_text "$YELLOW" "[+] Install: $pkg"
+        if [[ ! -f "$SESSION_DIR/apt_updated" ]]; then
+            apt-get update -qq
+            echo "$(date +%T) install_pkg $cmd" > "$SESSION_DIR/apt_updated"
+        fi
+        apt-get install -y "$pkg" || { 
+            color_text "$RED" "Error: Failed to install $pkg";
+            exit 1;
+        }
     fi
 }
 
