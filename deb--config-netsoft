@@ -16,6 +16,7 @@ if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
         echo "ERROR: not loaded deb--lib" >&2
         exit 1
     fi
+    else
     COLOR_SCRIPT=$GREEN
 fi
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
