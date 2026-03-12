@@ -4,13 +4,13 @@
 # mls-deb--lib-26-03-10
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
-RED='\e[31m'
-GREEN='\e[32m'
-YELLOW='\e[33m'
-BLUE='\e[34m'
-CYAN='\e[36m'
-AQUA='\e[1;36m'
-NC='\e[0m'
+export RED='\e[31m'
+export GREEN='\e[32m'
+export YELLOW='\e[33m'
+export BLUE='\e[34m'
+export CYAN='\e[36m'
+export AQUA='\e[1;36m'
+export NC='\e[0m'
 color_text() {
     local color=$1
     shift
