@@ -9,8 +9,8 @@ source /etc/os-release
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
     if source <(curl -sL https://mls.sk87.top/deb--lib); then
-        export DEB_LIB_STATUS = "loaded"
-        COLOR_SCRIPT=$GREEN
+        export DEB_LIB_STATUS="loaded"
+        COLOR_SCRIPT=$CYAN
         color_text "$COLOR_SCRIPT" "[✓] deb--lib LOADED"
     else
         echo "ERROR: not loaded deb--lib" >&2
