@@ -57,5 +57,4 @@ cleanup() {
 export -f install_pkg
 export -f color_text
 export -f setup_session
-export -f check_deb_lib
 export -f cleanup

@@ -21,9 +21,6 @@ else
 fi
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 
-# 0. [SYSTEM]
-color_text "$COLOR_SCRIPT" "==>>==>>==>> [SYSTEM] ->->-> Update and Upgrade"
-color_text "$COLOR_SCRIPT" "==>>==>>==>> [SYSTEM][✓] ->->-> Update and Upgrade completed!"
 # 1. [CONFIG-NETSOFT]
 color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETSOFT] ->->-> Installing network programs..."
 install_pkg "mtr"
