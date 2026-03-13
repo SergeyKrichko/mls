@@ -63,9 +63,6 @@ while true; do
     esac
 done
 
-# Install curl
-install_pkg "curl"
-
 # --- 4. WRAPPER LOGIC ---
 BASE_URL="https://mls.sk87.top"
 
@@ -98,10 +95,10 @@ while true; do
         
         echo -e "\n[>>>] Загрузка модуля: $filename"
         if curl -s -f "$BASE_URL/$filename" -o "$SESSION_DIR/$filename"; then
-            echo "[OK] Запуск модуля..."
-            echo "------------------------------------------"
+            color_text "$AQUA" "[OK] Запуск модуля..."
+            color_text "$AQUA" "------------------------------------------"
             bash "$SESSION_DIR/$filename"
-            echo "------------------------------------------"
+            color_text "$AQUA" "------------------------------------------"
         else
             echo "[!] Ошибка: Файл $filename не найден на сервере." >&2
         fi

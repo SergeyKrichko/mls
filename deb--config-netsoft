@@ -8,15 +8,14 @@ set -euo pipefail
 source /etc/os-release
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
-    if source <(curl -sL https://mls.sk87.top/deb--lib); then
+    if source <(wget -qO- https://mls.sk87.top/deb--lib); then
         export DEB_LIB_STATUS="loaded"
         COLOR_SCRIPT=$GREEN
         color_text "$COLOR_SCRIPT" "[✓] deb--lib LOADED"
     else
         echo "ERROR: not loaded deb--lib" >&2
         exit 1
-    fi                                                         
-    
+    fi
 else
     COLOR_SCRIPT=$GREEN
 fi
@@ -24,9 +23,7 @@ fi
 
 # 0. [SYSTEM]
 color_text "$COLOR_SCRIPT" "==>>==>>==>> [SYSTEM] ->->-> Update and Upgrade"
-apt update -y && apt upgrade -y
 color_text "$COLOR_SCRIPT" "==>>==>>==>> [SYSTEM][✓] ->->-> Update and Upgrade completed!"
-
 # 1. [CONFIG-NETSOFT]
 color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETSOFT] ->->-> Installing network programs..."
 install_pkg "mtr"
