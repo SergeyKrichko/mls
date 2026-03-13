@@ -33,7 +33,7 @@ color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Interface found
 color_text "$COLOR_SCRIPT" "Select network setup type:"
 color_text "$COLOR_SCRIPT" "d) Dynamic (DHCP)"
 color_text "$COLOR_SCRIPT" "s) Static IP"
-color_text "$COLOR_SCRIPT" "Enter d or s: \c" MODE
+color_text "$COLOR_SCRIPT" "Enter d or s: \c"
 read -n 1 -r -s MODE < /dev/tty
 # Create backup
 cp "$CONFIG_FILE" "$CONFIG_FILE.bak"
@@ -50,13 +50,13 @@ iface $IFACE inet dhcp
 EOF
 
 elif [[ "$MODE" == "s" ]]; then
-  color_text "$COLOR_SCRIPT" "Enter a static IP address (e.g. 192.168.1.100): " IP_ADDR
+  color_text "$COLOR_SCRIPT" "Enter a static IP address (e.g. 192.168.1.100): "
   read -n 1 -r -s IP_ADDR < /dev/tty
-  color_text "$COLOR_SCRIPT" "Enter a subnet mask (e.g. 255.255.255.0): " NETMASK
+  color_text "$COLOR_SCRIPT" "Enter a subnet mask (e.g. 255.255.255.0): "
   read -n 1 -r -s NETMASK < /dev/tty
-  color_text "$COLOR_SCRIPT" "Enter a gateway (e.g. 192.168.1.1): " GATEWAY
+  color_text "$COLOR_SCRIPT" "Enter a gateway (e.g. 192.168.1.1): "
   read -n 1 -r -s GATEWAY < /dev/tty
-  color_text "$COLOR_SCRIPT" "Enter a DNS server(s) (e.g. 8.8.8 1.1.1.1): " DNS
+  color_text "$COLOR_SCRIPT" "Enter a DNS server(s) (e.g. 8.8.8 1.1.1.1): "
   read -n 1 -r -s DNS < /dev/tty
 
   color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Setting up a static IP..."
