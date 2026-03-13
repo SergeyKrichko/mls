@@ -18,14 +18,14 @@ fi
 if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
     if source <(wget -qO- https://mls.sk87.top/deb--lib); then
         export DEB_LIB_STATUS="loaded"
-        COLOR_SCRIPT=$CYAN
+        COLOR_SCRIPT=$AQUA
         color_text "$COLOR_SCRIPT" "[✓] deb--lib LOADED"
     else
         echo "ERROR: not loaded deb--lib" >&2
         return 1
     fi
     else
-    COLOR_SCRIPT=$CYAN
+    COLOR_SCRIPT=$AQUA
 fi
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 source /etc/os-release
@@ -95,10 +95,10 @@ while true; do
         
         echo -e "\n[>>>] Загрузка модуля: $filename"
         if curl -s -f "$BASE_URL/$filename" -o "$SESSION_DIR/$filename"; then
-            color_text "$AQUA" "[OK] Запуск модуля..."
-            color_text "$AQUA" "------------------------------------------"
+            color_text "$CYAN" "[OK] Запуск модуля..."
+            color_text "$CYAN" "------------------------------------------"
             bash "$SESSION_DIR/$filename"
-            color_text "$AQUA" "------------------------------------------"
+            color_text "$CYAN" "------------------------------------------"
         else
             echo "[!] Ошибка: Файл $filename не найден на сервере." >&2
         fi

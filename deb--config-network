@@ -7,9 +7,21 @@
 set -euo pipefail
 . /etc/os-release
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-
+if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
+    if source <(wget -qO- https://mls.sk87.top/deb--lib); then
+        export DEB_LIB_STATUS="loaded"
+        COLOR_SCRIPT=$GREEN
+        color_text "$COLOR_SCRIPT" "[✓] deb--lib LOADED"
+    else
+        echo "ERROR: not loaded deb--lib" >&2
+        exit 1
+    fi
+else
+    COLOR_SCRIPT=$GREEN
+fi
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 # 1. [CONFIG-NETWORK]
-echo "==>>==>>==>> [CONFIG-NETWORK] ->->-> START Configuration..."
+color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> START Configuration..."
 
 CONFIG_FILE="/etc/network/interfaces"
 
@@ -17,17 +29,17 @@ CONFIG_FILE="/etc/network/interfaces"
 IFACE=$(ip -o -4 route show to default | awk '{print $5}')
 
 # 2. [CONFIG-NETWORK] configuration
-echo "==>>==>>==>> [CONFIG-NETWORK] ->->-> Interface found: $IFACE"
-echo "Select network setup type:"
-echo "d) Dynamic (DHCP)"
-echo "s) Static IP"
-read -p "Enter d or s: " MODE
-
+color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Interface found: $IFACE"
+color_text "$COLOR_SCRIPT" "Select network setup type:"
+color_text "$COLOR_SCRIPT" "d) Dynamic (DHCP)"
+color_text "$COLOR_SCRIPT" "s) Static IP"
+color_text "$COLOR_SCRIPT" "Enter d or s: \c" MODE
+read -n 1 -r -s MODE < /dev/tty
 # Create backup
 cp "$CONFIG_FILE" "$CONFIG_FILE.bak"
 
 if [[ "$MODE" == "d" ]]; then
-  echo "==>>==>>==>> [CONFIG-NETWORK] ->->-> DHCP Configuration..."
+  color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> DHCP Configuration..."
 
   cat > "$CONFIG_FILE" <<EOF
 auto lo
@@ -38,12 +50,16 @@ iface $IFACE inet dhcp
 EOF
 
 elif [[ "$MODE" == "s" ]]; then
-  read -p "Enter a static IP address (e.g. 192.168.1.100): " IP_ADDR
-  read -p "Enter a subnet mask (e.g. 255.255.255.0): " NETMASK
-  read -p "Enter a gateway (e.g. 192.168.1.1): " GATEWAY
-  read -p "Enter a DNS server(s) (e.g. 8.8.8 1.1.1.1): " DNS
+  color_text "$COLOR_SCRIPT" "Enter a static IP address (e.g. 192.168.1.100): " IP_ADDR
+  read -n 1 -r -s IP_ADDR < /dev/tty
+  color_text "$COLOR_SCRIPT" "Enter a subnet mask (e.g. 255.255.255.0): " NETMASK
+  read -n 1 -r -s NETMASK < /dev/tty
+  color_text "$COLOR_SCRIPT" "Enter a gateway (e.g. 192.168.1.1): " GATEWAY
+  read -n 1 -r -s GATEWAY < /dev/tty
+  color_text "$COLOR_SCRIPT" "Enter a DNS server(s) (e.g. 8.8.8 1.1.1.1): " DNS
+  read -n 1 -r -s DNS < /dev/tty
 
-  echo "==>>==>>==>> [CONFIG-NETWORK] ->->-> Setting up a static IP..."
+  color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Setting up a static IP..."
 
   cat > "$CONFIG_FILE" <<EOF
 auto lo
@@ -58,13 +74,13 @@ iface $IFACE inet static
 EOF
 
 else
-  echo "==>>==>>==>> [CONFIG-NETWORK][!] ->->-> Without changing network settings. Interruption."
+  color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK][!] ->->-> Without changing network settings. Interruption."
   exit 1
 fi
 
 # Reboot network
-echo "==>>==>>==>> [CONFIG-NETWORK] ->->-> Restarting the interface $IFACE..."
+color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Restarting the interface $IFACE..."
 ifdown "$IFACE" && ifup "$IFACE"
 
 # [NETWORK] >>> Network configuration ."
-echo "==>>==>>==>> [CONFIG-NETWORK][✓] ->->-> Network configuration completed!"
+color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK][✓] ->->-> Network configuration completed!"
