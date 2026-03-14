@@ -53,6 +53,35 @@ cleanup() {
     rm -rf "$SESSION_DIR"
 }
 
+upgrade_system(){
+    echo -n "UPGRADE SYSTEM? [Y/n]: "
+    while true; do
+        read -n 1 -r -s answer < /dev/tty
+        case "$answer" in
+            [Yy]|"") 
+                echo "[+] UPDATE and UPGRADE (dist-upgrade)..."
+                export DEBIAN_FRONTEND=noninteractive
+                apt-get update && apt-get dist-upgrade -y
+                echo "$(date +%T) $SESSION_NAME" > "$SESSION_DIR/apt_updated"
+                if [[ -f /run/reboot-required ]]; then
+                    color_text "$RED" "[!!!] WARNING: System reboot is required to apply updates!"
+                    if [[ -f /run/reboot-required.pkgs ]]; then
+                        echo "[*] Packages requiring reboot:"
+                        sed 's/^/    - /' /run/reboot-required.pkgs
+                    fi
+                fi
+                break 
+                ;;
+            [Nn])
+                echo "[-] MISSED UPGRADE."
+                break 
+                ;;
+            *)
+                ;;
+        esac
+    done
+}
+
 show_main_menu() {
     while true; do
         # clear
