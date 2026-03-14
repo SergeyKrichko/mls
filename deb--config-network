@@ -51,13 +51,13 @@ EOF
 
 elif [[ "$MODE" == "s" ]]; then
   color_text "$COLOR_SCRIPT" "Enter a static IP address (e.g. 192.168.1.100): "
-  read -p 1 -r -s IP_ADDR < /dev/tty
+  read -p -r -s IP_ADDR < /dev/tty
   color_text "$COLOR_SCRIPT" "Enter a subnet mask (e.g. 255.255.255.0): "
-  read -p 1 -r -s NETMASK < /dev/tty
+  read -p -r -s NETMASK < /dev/tty
   color_text "$COLOR_SCRIPT" "Enter a gateway (e.g. 192.168.1.1): "
-  read -p 1 -r -s GATEWAY < /dev/tty
+  read -p -r -s GATEWAY < /dev/tty
   color_text "$COLOR_SCRIPT" "Enter a DNS server(s) (e.g. 8.8.8 1.1.1.1): "
-  read -p 1 -r -s DNS < /dev/tty
+  read -p -r -s DNS < /dev/tty
 
   color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Setting up a static IP..."
 
