@@ -53,6 +53,81 @@ cleanup() {
     rm -rf "$SESSION_DIR"
 }
 
+show_main_menu() {
+    while true; do
+        # clear
+        color_text "$COLOR_SCRIPT" "=========================================="
+        color_text "$COLOR_SCRIPT" "  DEBIAN CONFIGURATOR ( mls.sk87.top )"
+        color_text "$COLOR_SCRIPT" "=========================================="
+
+        for i in "${!MENU_ITEMS[@]}"; do
+            raw_item="${MENU_ITEMS[$i]}"
+            # Забираем всё до первого символа '|'
+            label="${raw_item%%|*}"
+            # Удаляем лишние пробелы (аналог xargs)
+            label="${label//[[:space:]]/}" 
+            
+            color_text "$COLOR_SCRIPT" "$((i+1))) $label"
+        done
+
+        for i in "${!MENU_ITEMS[@]}"; do
+            label=$(echo "${MENU_ITEMS[$i]}" | cut -d'|' -f1 | xargs)
+            color_text "$COLOR_SCRIPT" "$((i+1))) $label"
+        done
+
+        color_text "$COLOR_SCRIPT" "0) Exit"
+        color_text "$COLOR_SCRIPT" "=========================================="
+        color_text "$COLOR_SCRIPT" "Choice MENU: \c"
+        read -n 1 -r choice < /dev/tty
+        echo -e "\n" # Перенос, чтобы логи не слиплись
+
+        # 3. Диспетчер выбора
+        case "$choice" in
+            0) 
+                color_text "$YELLOW" "Завершение работы..."
+                exit 0 
+                ;;
+            [1-9])
+                # Проверяем, существует ли такой индекс в массиве
+                idx=$((choice-1))
+                if [[ -n "${MENU_ITEMS[$idx]}" ]]; then
+                    handle_module "$idx"
+                else
+                    color_text "$RED" "Пункт не существует"
+                    sleep 1
+                fi
+                ;;
+            *)
+                color_text "$RED" "Неверный ввод. Используйте 1-9 или 0"
+                sleep 1
+                ;;
+        esac
+    done
+
+
+    # while true; do
+
+    #     # Проверка: является ли нажатая клавиша цифрой и попадает ли в диапазон меню
+    #     if [[ "$choice" =~ ^[1-9]$ ]] && (( choice <= ${#MENU_ITEMS[@]} )); then
+    #         idx=$((choice-1))
+    #         filename=$(echo "${MENU_ITEMS[$idx]}" | cut -d'|' -f2 | xargs)
+            
+    #         echo -e "\n[>>>] Загрузка модуля: $filename"
+    #         if curl -s -f "$BASE_URL/$filename" -o "$SESSION_DIR/$filename"; then
+    #             color_text "$CYAN" "[OK] Запуск модуля..."
+    #             color_text "$CYAN" "------------------------------------------"
+    #             bash "$SESSION_DIR/$filename"
+    #             color_text "$CYAN" "------------------------------------------"
+    #         else
+    #             echo "[!] Ошибка: Файл $filename не найден на сервере." >&2
+    #         fi
+    #     else
+    #         echo -e "\n[!] Неверный выбор: '$choice'. Используйте цифры 0-${#MENU_ITEMS[@]}."
+    #     fi
+    # done
+}
+
+
 
 export -f install_pkg
 export -f color_text
