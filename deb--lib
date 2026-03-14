@@ -91,16 +91,9 @@ show_main_menu() {
 
         for i in "${!MENU_ITEMS[@]}"; do
             raw_item="${MENU_ITEMS[$i]}"
-            # Забираем всё до первого символа '|'
             label="${raw_item%%|*}"
-            # Удаляем лишние пробелы (аналог xargs)
-            label="${label//[[:space:]]/}" 
-            
-            color_text "$COLOR_SCRIPT" "$((i+1))) $label"
-        done
-
-        for i in "${!MENU_ITEMS[@]}"; do
-            label=$(echo "${MENU_ITEMS[$i]}" | cut -d'|' -f1 | xargs)
+            label="${label#"${label%%[![:space:]]*}"}"
+            label="${label%"${label##*[![:space:]]}"}"
             color_text "$COLOR_SCRIPT" "$((i+1))) $label"
         done
 
