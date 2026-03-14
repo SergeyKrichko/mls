@@ -90,11 +90,11 @@ show_main_menu() {
         color_text "$COLOR_SCRIPT" "=========================================="
 
         for i in "${!MENU_ITEMS[@]}"; do
-            raw_item="${MENU_ITEMS[$i]}"
-            label="${raw_item%%|*}"
-            label="${label#"${label%%[![:space:]]*}"}"
-            label="${label%"${label##*[![:space:]]}"}"
-            color_text "$COLOR_SCRIPT" "$((i+1))) $label"
+            raw_label_item="${MENU_ITEMS[$i]}"
+            label_item="${raw_label_item%%|*}"
+            label_item="${label_item#"${label_item%%[![:space:]]*}"}"
+            label_item="${label_item%"${label_item##*[![:space:]]}"}"
+            color_text "$COLOR_SCRIPT" "$((i+1))) $label_item"
         done
 
         color_text "$COLOR_SCRIPT" "0) Exit"
