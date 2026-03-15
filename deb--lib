@@ -54,7 +54,7 @@ cleanup() {
 }
 
 upgrade_system(){
-    color_text "$CYAN" "UPGRADE SYSTEM? [Y/n]: \c"
+    echo -ne "${COLOR_SCRIPT}UPGRADE SYSTEM? [Y/n]: ${NC}"
     while true; do
         read -n 1 -r -s answer < /dev/tty
         case "$answer" in
