@@ -50,5 +50,5 @@ MENU_ITEMS=(
   "Add Sudo User                | deb--config-newuser"
 )
 
-show_main_menu
+show_menu
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#

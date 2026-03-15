@@ -82,7 +82,7 @@ upgrade_system(){
     done
 }
 
-show_main_menu() {
+show_menu() {
     while true; do
         # clear
         color_text "$COLOR_SCRIPT" "=========================================="
@@ -101,9 +101,8 @@ show_main_menu() {
         color_text "$COLOR_SCRIPT" "=========================================="
         echo -ne "${COLOR_SCRIPT}Choice MENU: ${NC}"
         read -n 1 -r choice < /dev/tty
-        echo -e "\n" # Перенос, чтобы логи не слиплись
+        echo -e "\n"
 
-        # 3. Диспетчер выбора
         case "$choice" in
             0) 
                 color_text "$YELLOW" "Завершение работы..."
@@ -111,9 +110,8 @@ show_main_menu() {
                 ;;
             [1-9])
                 idx=$((choice-1))
-                # Проверка: индекс должен быть в рамках массива
                 if (( idx >= 0 && idx < ${#MENU_ITEMS[@]} )); then
-                    handle_module "$idx"
+                    show_menu_module "$idx"
                 else
                     color_text "$RED" "Пункт $choice не существует"
                     sleep 1
@@ -127,33 +125,24 @@ show_main_menu() {
     done
 }
 
-handle_module{
+show_menu_module() {
     local idx=$1
-    local label=$(echo "${MENU_ITEMS[$idx]}" | cut -d'|' -f1 | xargs)
-    local filename=$(echo "${MENU_ITEMS[$idx]}" | cut -d'|' -f2 | xargs)
-    local module_path="$SESSION_DIR/$filename"
+    local raw="${MENU_ITEMS[$idx]}"
+    local label="${raw%%|*}"; label="${label#"${label%%[![:space:]]*}"}"; label="${label%"${label##*[![:space:]]}"}"
+    local file="${raw##*|}"; file="${file#"${file%%[![:space:]]*}"}"; file="${file%"${file##*[![:space:]]}"}"
 
-    echo -e "\n[>>>] Модуль: $label"
-    
-    # 1. Скачиваем. Флаг -f (fail) не создаст файл, если на сервере 404
-    if curl -sL -f "$BASE_URL/$filename" -o "$module_path"; then
-        color_text "$CYAN" "[OK] Запуск модуля..."
-        echo "------------------------------------------"
-        
-        # 2. Запуск через source, чтобы модуль видел наши функции (install_pkg и т.д.)
-        # Но если хочешь полной изоляции — используй: bash "$module_path"
-        if ! source "$module_path"; then
-            color_text "$RED" "[!] Модуль завершился с ошибкой."
-        fi
-        
-        echo "------------------------------------------"
-        read -n1 -rs -p "Нажмите любую клавишу для возврата в меню..."
-    else
-        color_text "$RED" "[!] Ошибка: Файл $filename не найден на сервере $BASE_URL"
-        sleep 2
+    color_text "$CYAN" ">>> Запуск: $label"
+
+    # Запуск через Process Substitution, чтобы не ломать stdin меню
+    if ! bash <(fetch_stream "$BASE_URL/$file"); then
+        color_text "$RED" "[!] Модуль завершился с ошибкой"
     fi
+    
+    echo -e "\n------------------------------------------"
+    # Добавляем -u0, чтобы read точно читал из терминала (FD 0)
+    color_text "$YELLOW" "Нажмите любую клавишу для возврата в меню..."
+    read -rn1 
 }
-
 
 export -f install_pkg
 export -f color_text
