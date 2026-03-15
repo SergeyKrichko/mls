@@ -131,16 +131,15 @@ show_menu_module() {
     local label="${raw%%|*}"; label="${label#"${label%%[![:space:]]*}"}"; label="${label%"${label##*[![:space:]]}"}"
     local file="${raw##*|}"; file="${file#"${file%%[![:space:]]*}"}"; file="${file%"${file##*[![:space:]]}"}"
 
+    color_text "$CYAN" "------------------------------------------"
     color_text "$CYAN" ">>> Запуск: $label"
 
-    # Запуск через Process Substitution, чтобы не ломать stdin меню
     if ! bash <(curl -sLf "$BASE_URL/$file"); then
         color_text "$RED" "[!] Модуль завершился с ошибкой"
     fi
     
-    echo -e "\n------------------------------------------"
-    # Добавляем -u0, чтобы read точно читал из терминала (FD 0)
-    color_text "$YELLOW" "Нажмите любую клавишу для возврата в меню..."
+    color_text "$CYAN" "------------------------------------------"
+    color_text "$CYAN" "Нажмите любую клавишу для возврата в меню..."
     read -rn1 
 }
 
