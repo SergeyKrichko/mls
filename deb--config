@@ -15,14 +15,18 @@ if [[ $EUID -ne 0 ]]; then
     die "Run is not root"
 fi
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+if ! command -v curl >/dev/null 2>&1; then
+    apt-get update -qq && apt-get install -y curl >/dev/null
+fi
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
-    if source <(wget -qO- https://mls.sk87.top/deb--lib); then
+    if source <(curl -sLf https://mls.sk87.top/deb--lib); then
         export DEB_LIB_STATUS="loaded"
         COLOR_SCRIPT=$AQUA
         color_text "$COLOR_SCRIPT" "[✓] deb--lib LOADED"
     else
         echo "ERROR: not loaded deb--lib" >&2
-        return 1
+        exit 1
     fi
     else
     COLOR_SCRIPT=$AQUA
@@ -34,8 +38,6 @@ setup_session $RAW_NAME
 trap cleanup EXIT
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 color_text "$COLOR_SCRIPT" "[✓] Session context initialized: $SESSION_DIR"
-
-# --- 2. SYSTEM UPGRADE ---
 upgrade_system
 
 # --- 4. WRAPPER LOGIC ---
