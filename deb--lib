@@ -134,7 +134,7 @@ show_menu_module() {
     color_text "$CYAN" ">>> Запуск: $label"
 
     # Запуск через Process Substitution, чтобы не ломать stdin меню
-    if ! bash <(fetch_stream "$BASE_URL/$file"); then
+    if ! bash <(curl -sLf "$BASE_URL/$file"); then
         color_text "$RED" "[!] Модуль завершился с ошибкой"
     fi
     
