@@ -12,9 +12,14 @@ export CYAN='\e[36m'
 export AQUA='\e[1;36m'
 export NC='\e[0m'
 color_text() {
-    local color=$1
+    local flags=""
+    while [[ "$1" == -* ]]; do
+        flags+="$1 "
+        shift
+    done
+    local color="${1:-$NC}"
     shift
-    echo -e "${color}$*${NC}"
+    echo $flags "${color}$*${NC}"
 }
 
 install_pkg() {
