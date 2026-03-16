@@ -1,12 +1,12 @@
 #!/bin/bash
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 # https://mls.sk87.top/deb--config-network
-# mls-deb--config-network-25-12-13
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 set -euo pipefail
 . /etc/os-release
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+
+# 0. Загрузка библиотеки
 if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
     if source <(wget -qO- https://mls.sk87.top/deb--lib); then
         export DEB_LIB_STATUS="loaded"
@@ -19,29 +19,37 @@ if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
 else
     COLOR_SCRIPT=$GREEN
 fi
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# 1. [CONFIG-NETWORK]
+
+# 1. [CONFIG-NETWORK] Инициализация
 color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> START Configuration..."
 
 CONFIG_FILE="/etc/network/interfaces"
+# Автоопределение интерфейса (безопасный вариант)
+IFACE=$(ip -o -4 route show to default | awk '{print $5}' | head -n1)
 
-# Get the name of the active interface
-IFACE=$(ip -o -4 route show to default | awk '{print $5}')
+if [[ -z "${IFACE:-}" ]]; then
+    color_text "$RED" "[!] Ошибка: Активный сетевой интерфейс не найден."
+    exit 1
+fi
 
-# 2. [CONFIG-NETWORK] configuration
 color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Interface found: $IFACE"
 color_text "$COLOR_SCRIPT" "Select network setup type:"
 color_text "$COLOR_SCRIPT" "d) Dynamic (DHCP)"
 color_text "$COLOR_SCRIPT" "s) Static IP"
-color_text "$COLOR_SCRIPT" "Enter d or s: \c"
-read -n 1 -r -s MODE < /dev/tty
-# Create backup
+
+# Используем нашу новую функцию с флагом -n
+color_text -n "$COLOR_SCRIPT" "Enter d or s: "
+read -rn1 MODE < /dev/tty
+echo "" # Перенос строки после нажатия клавиши
+
+# Создание бэкапа
 cp "$CONFIG_FILE" "$CONFIG_FILE.bak"
 
+# 2. Логика конфигурации
 if [[ "$MODE" == "d" ]]; then
-  color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> DHCP Configuration..."
+    color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> DHCP Configuration..."
 
-  cat > "$CONFIG_FILE" <<EOF
+    cat > "$CONFIG_FILE" <<EOF
 auto lo
 iface lo inet loopback
 
@@ -50,37 +58,52 @@ iface $IFACE inet dhcp
 EOF
 
 elif [[ "$MODE" == "s" ]]; then
-  color_text "$COLOR_SCRIPT" "Enter a static IP address (e.g. 192.168.1.100): "
-  read -p IP_ADDR < /dev/tty
-  color_text "$COLOR_SCRIPT" "Enter a subnet mask (e.g. 255.255.255.0): "
-  read -p NETMASK < /dev/tty
-  color_text "$COLOR_SCRIPT" "Enter a gateway (e.g. 192.168.1.1): "
-  read -p GATEWAY < /dev/tty
-  color_text "$COLOR_SCRIPT" "Enter a DNS server(s) (e.g. 8.8.8 1.1.1.1): "
-  read -p DNS < /dev/tty
+    # ВНИМАНИЕ: В Bash 'read -p' принимает текст приглашения, а не переменную.
+    # Правильный синтаксис: read -p "Prompt" VARIABLE
+    
+    color_text -n "$COLOR_SCRIPT" "Enter a static IP address (e.g. 192.168.1.100): "
+    read -r IP_ADDR < /dev/tty
+    
+    color_text -n "$COLOR_SCRIPT" "Enter a subnet mask (e.g. 255.255.255.0): "
+    read -r NETMASK < /dev/tty
+    
+    color_text -n "$COLOR_SCRIPT" "Enter a gateway (e.g. 192.168.1.1): "
+    read -r GATEWAY < /dev/tty
+    
+    color_text -n "$COLOR_SCRIPT" "Enter a DNS server(s) (e.g. 8.8.8.8 1.1.1.1): "
+    read -r DNS < /dev/tty
 
-  color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Setting up a static IP..."
+    # Проверка на пустые переменные (из-за set -u)
+    : "${IP_ADDR:?IP адрес не может быть пустым}"
+    : "${NETMASK:?Маска не может быть пустой}"
+    : "${GATEWAY:?Шлюз не может быть пустым}"
 
-  cat > "$CONFIG_FILE" <<EOF
+    color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Setting up a static IP..."
+
+    cat > "$CONFIG_FILE" <<EOF
 auto lo
 iface lo inet loopback
 
 auto $IFACE
 iface $IFACE inet static
-  address $IP_ADDR
-  netmask $NETMASK
-  gateway $GATEWAY
-  dns-nameservers $DNS
+    address $IP_ADDR
+    netmask $NETMASK
+    gateway $GATEWAY
+    dns-nameservers $DNS
 EOF
 
 else
-  color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK][!] ->->-> Without changing network settings. Interruption."
-  exit 1
+    color_text "$RED" "==>>==>>==>> [CONFIG-NETWORK][!] ->->-> Interrupted. No changes made."
+    exit 1
 fi
 
-# Reboot network
-color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Restarting the interface $IFACE..."
-ifdown "$IFACE" && ifup "$IFACE"
+# 3. Применение настроек
+color_text "$YELLOW" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Restarting interface $IFACE..."
 
-# [NETWORK] >>> Network configuration ."
-color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK][✓] ->->-> Network configuration completed!"
+# В современных Debian лучше использовать ip link set или systemctl restart networking,
+# но ifdown/ifup — это классика для /etc/network/interfaces
+ifdown "$IFACE" --force || true 
+ifup "$IFACE"
+
+# Финал
+color_text "$GREEN" "==>>==>>==>> [CONFIG-NETWORK][✓] ->->-> Configuration completed!"
