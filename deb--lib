@@ -12,7 +12,7 @@ export CYAN='\e[36m'
 export AQUA='\e[1;36m'
 export NC='\e[0m'
 color_text() {
-    local flags=""
+    local flags="-e "
     while [[ "$1" == -* ]]; do
         flags+="$1 "
         shift
@@ -26,13 +26,13 @@ install_pkg() {
     local cmd=$1
     local pkg=${2:-$1}
     if ! command -v "$cmd" >/dev/null 2>&1; then
-        color_text -e "$YELLOW" "[+] Install: $pkg"
+        color_text "$YELLOW" "[+] Install: $pkg"
         if [[ ! -f "$SESSION_DIR/apt_updated" ]]; then
             apt-get update -qq
             echo "$(date +%T) install_pkg $cmd" > "$SESSION_DIR/apt_updated"
         fi
         apt-get install -y "$pkg" || { 
-            color_text -e "$RED" "Error: Failed to install $pkg";
+            color_text  "$RED" "Error: Failed to install $pkg";
             return 1;
         }
     fi
@@ -49,7 +49,7 @@ setup_session() {
     fi
     export SESSION_DIR=$(mktemp -d -t "${SESSION_NAME}-XXXXXXXXXX")
     if [[ ! -d "$SESSION_DIR" ]]; then
-        color_text -e "$RED" "Критическая ошибка: Не удалось создать SESSION_DIR" >&2
+        color_text  "$RED" "Критическая ошибка: Не удалось создать SESSION_DIR" >&2
         return 1
     fi
 }
@@ -93,21 +93,21 @@ upgrade_system(){
 show_menu() {
     while true; do
         clear
-        color_text "$COLOR_SCRIPT" "=========================================="
-        color_text "$COLOR_SCRIPT" "  DEBIAN CONFIGURATOR ( mls.sk87.top )"
-        color_text "$COLOR_SCRIPT" "=========================================="
+        color_text  "$COLOR_SCRIPT" "=========================================="
+        color_text  "$COLOR_SCRIPT" "  DEBIAN CONFIGURATOR ( mls.sk87.top )"
+        color_text  "$COLOR_SCRIPT" "=========================================="
 
         for i in "${!MENU_ITEMS[@]}"; do
             raw_label_item="${MENU_ITEMS[$i]}"
             label_item="${raw_label_item%%|*}"
             label_item="${label_item#"${label_item%%[![:space:]]*}"}"
             label_item="${label_item%"${label_item##*[![:space:]]}"}"
-            color_text "$COLOR_SCRIPT" "$((i+1))) $label_item"
+            color_text  "$COLOR_SCRIPT" "$((i+1))) $label_item"
         done
 
-        color_text "$COLOR_SCRIPT" "0) Exit"
-        color_text "$COLOR_SCRIPT" "=========================================="
-        color_text -ne "Choice MENU: "
+        color_text  "$COLOR_SCRIPT" "0) Exit"
+        color_text  "$COLOR_SCRIPT" "=========================================="
+        color_text  -n "Choice MENU: "
         read -n 1 -r choice < /dev/tty
         echo -e "\n"
 

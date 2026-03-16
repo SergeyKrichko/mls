@@ -40,7 +40,7 @@ clear
 tput civis
 trap cleanup EXIT
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-color_text -e "$COLOR_SCRIPT" "[✓] Session context initialized: $SESSION_DIR"
+color_text  "$COLOR_SCRIPT" "[✓] Session context initialized: $SESSION_DIR"
 upgrade_system
 
 # --- 4. WRAPPER LOGIC ---
