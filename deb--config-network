@@ -84,8 +84,12 @@ elif [[ "$MODE" == "s" ]]; then
         color_text "$RED" "[!] Invalid Gateway format."
     done
 
-    color_text -n "$COLOR_SCRIPT" "Enter a DNS (e.g. 8.8.8.8 1.1.1.1): "
-    read -r DNS < /dev/tty
+    while true; do
+        color_text -n "$COLOR_SCRIPT" "Enter a DNS (e.g. 8.8.8.8 1.1.1.1): "
+        read -r DNS < /dev/tty
+        if validate_ip "${DNS:-}"; then break; fi
+        color_text "$RED" "[!] Invalid DNS format."
+    done
 
     color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Setting up a static IP..."
 
@@ -103,16 +107,15 @@ EOF
 
 else
     color_text "$RED" "==>>==>>==>> [CONFIG-NETWORK][!] ->->-> Interrupted. No changes made."
-    exit 1
+    return 1
 fi
 
 # 3. Применение настроек
 color_text "$YELLOW" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Restarting interface $IFACE..."
 
-# В современных Debian лучше использовать ip link set или systemctl restart networking,
-# но ifdown/ifup — это классика для /etc/network/interfaces
-ifdown "$IFACE" --force || true 
-ifup "$IFACE"
+systemctl enable --now systemd-networkd
+networkctl reload
+networkctl reconfigure "$IFACE"
 
 # Финал
 color_text "$GREEN" "==>>==>>==>> [CONFIG-NETWORK][✓] ->->-> Configuration completed!"
