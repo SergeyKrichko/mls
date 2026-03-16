@@ -172,3 +172,4 @@ export -f install_pkg
 export -f color_text
 export -f setup_session
 export -f cleanup
+export -f validate_ip
