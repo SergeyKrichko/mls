@@ -59,7 +59,7 @@ upgrade_system(){
         read -n 1 -r -s answer < /dev/tty
         case "$answer" in
             [Yy]|"") 
-                echo "[+] UPDATE and UPGRADE (dist-upgrade)..."
+                color_text "$CYAN" "[+] UPDATE and UPGRADE (dist-upgrade)..."
                 export DEBIAN_FRONTEND=noninteractive
                 apt-get update && apt-get dist-upgrade -y
                 echo "$(date +%T) $SESSION_NAME" > "$SESSION_DIR/apt_updated"
@@ -73,7 +73,7 @@ upgrade_system(){
                 break 
                 ;;
             [Nn])
-                echo "[-] MISSED UPGRADE."
+                color_text "$CYAN" "[-] MISSED UPGRADE."
                 break 
                 ;;
             *)
