@@ -58,25 +58,34 @@ iface $IFACE inet dhcp
 EOF
 
 elif [[ "$MODE" == "s" ]]; then
-    # ВНИМАНИЕ: В Bash 'read -p' принимает текст приглашения, а не переменную.
-    # Правильный синтаксис: read -p "Prompt" VARIABLE
-    
-    color_text -n "$COLOR_SCRIPT" "Enter a static IP address (e.g. 192.168.1.100): "
-    read -r IP_ADDR < /dev/tty
-    
-    color_text -n "$COLOR_SCRIPT" "Enter a subnet mask (e.g. 255.255.255.0): "
-    read -r NETMASK < /dev/tty
-    
-    color_text -n "$COLOR_SCRIPT" "Enter a gateway (e.g. 192.168.1.1): "
-    read -r GATEWAY < /dev/tty
-    
-    color_text -n "$COLOR_SCRIPT" "Enter a DNS server(s) (e.g. 8.8.8.8 1.1.1.1): "
-    read -r DNS < /dev/tty
+    # Цикл для ввода IP с проверкой
+    while true; do
+        color_text -n "$COLOR_SCRIPT" "Enter a static IP address: "
+        read -r IP_ADDR < /dev/tty
+        if validate_ip "${IP_ADDR:-}"; then
+            break
+        else
+            color_text "$RED" "[!] Invalid IP format. Try again."
+        fi
+    done
 
-    # Проверка на пустые переменные (из-за set -u)
-    : "${IP_ADDR:?IP адрес не может быть пустым}"
-    : "${NETMASK:?Маска не может быть пустой}"
-    : "${GATEWAY:?Шлюз не может быть пустым}"
+    # Аналогично для маски и шлюза
+    while true; do
+        color_text -n "$COLOR_SCRIPT" "Enter a subnet mask: "
+        read -r NETMASK < /dev/tty
+        if validate_ip "${NETMASK:-}"; then break; fi
+        color_text "$RED" "[!] Invalid Mask format."
+    done
+
+    while true; do
+        color_text -n "$COLOR_SCRIPT" "Enter a gateway: "
+        read -r GATEWAY < /dev/tty
+        if validate_ip "${GATEWAY:-}"; then break; fi
+        color_text "$RED" "[!] Invalid Gateway format."
+    done
+
+    color_text -n "$COLOR_SCRIPT" "Enter a DNS (e.g. 8.8.8.8 1.1.1.1): "
+    read -r DNS < /dev/tty
 
     color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Setting up a static IP..."
 
