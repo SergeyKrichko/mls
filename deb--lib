@@ -84,7 +84,7 @@ upgrade_system(){
 
 show_menu() {
     while true; do
-        # clear
+        clear
         color_text "$COLOR_SCRIPT" "=========================================="
         color_text "$COLOR_SCRIPT" "  DEBIAN CONFIGURATOR ( mls.sk87.top )"
         color_text "$COLOR_SCRIPT" "=========================================="
@@ -106,14 +106,15 @@ show_menu() {
         case "$choice" in
             0) 
                 color_text "$YELLOW" "Завершение работы..."
-                exit 0 
+                return 0 
                 ;;
             [1-9])
                 idx=$((choice-1))
                 if (( idx >= 0 && idx < ${#MENU_ITEMS[@]} )); then
-                    show_menu_module "$idx"
+                    choice_menu_idx "$idx"
                 else
                     color_text "$RED" "Пункт $choice не существует"
+                    echo -e "\n"
                     sleep 1
                 fi
                 ;;
@@ -125,7 +126,7 @@ show_menu() {
     done
 }
 
-show_menu_module() {
+choice_menu_idx() {
     local idx=$1
     local raw="${MENU_ITEMS[$idx]}"
     local label="${raw%%|*}"; label="${label#"${label%%[![:space:]]*}"}"; label="${label%"${label##*[![:space:]]}"}"
@@ -140,7 +141,7 @@ show_menu_module() {
     
     color_text "$CYAN" "------------------------------------------"
     color_text "$CYAN" "Нажмите любую клавишу для возврата в меню..."
-    read -rn1 
+    read -rn1 _ < /dev/tty
 }
 
 export -f install_pkg
