@@ -26,14 +26,14 @@ install_pkg() {
     local cmd=$1
     local pkg=${2:-$1}
     if ! command -v "$cmd" >/dev/null 2>&1; then
-        color_text "$YELLOW" "[+] Install: $pkg"
+        color_text -e "$YELLOW" "[+] Install: $pkg"
         if [[ ! -f "$SESSION_DIR/apt_updated" ]]; then
             apt-get update -qq
             echo "$(date +%T) install_pkg $cmd" > "$SESSION_DIR/apt_updated"
         fi
         apt-get install -y "$pkg" || { 
-            color_text "$RED" "Error: Failed to install $pkg";
-            exit 1;
+            color_text -e "$RED" "Error: Failed to install $pkg";
+            return 1;
         }
     fi
 }
@@ -49,7 +49,7 @@ setup_session() {
     fi
     export SESSION_DIR=$(mktemp -d -t "${SESSION_NAME}-XXXXXXXXXX")
     if [[ ! -d "$SESSION_DIR" ]]; then
-        color_text "$RED" "Критическая ошибка: Не удалось создать SESSION_DIR" >&2
+        color_text -e "$RED" "Критическая ошибка: Не удалось создать SESSION_DIR" >&2
         return 1
     fi
 }
@@ -107,7 +107,7 @@ show_menu() {
 
         color_text "$COLOR_SCRIPT" "0) Exit"
         color_text "$COLOR_SCRIPT" "=========================================="
-        echo -ne "${COLOR_SCRIPT}Choice MENU: ${NC}"
+        color_text -ne "Choice MENU: "
         read -n 1 -r choice < /dev/tty
         echo -e "\n"
 
