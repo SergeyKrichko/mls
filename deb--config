@@ -35,6 +35,9 @@ fi
 source /etc/os-release
 RAW_NAME="raw--deb--config"
 setup_session $RAW_NAME
+tput smcup
+clear
+tput civis
 trap cleanup EXIT
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 color_text "$COLOR_SCRIPT" "[✓] Session context initialized: $SESSION_DIR"

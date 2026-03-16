@@ -51,6 +51,9 @@ setup_session() {
 
 cleanup() {
     rm -rf "$SESSION_DIR"
+    tput cnorm   # Показать курсор
+    tput rmcup   # Вернуть основной буфер терминала
+    echo "[*] Возврат в основную консоль. История сохранена."
 }
 
 upgrade_system(){
