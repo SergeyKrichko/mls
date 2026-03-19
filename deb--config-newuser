@@ -13,51 +13,48 @@ fi
 if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
     if source <(curl -sLf https://mls.sk87.top/deb--lib); then
         export DEB_LIB_STATUS="loaded"
-        COLOR_SCRIPT=$AQUA
+        COLOR_SCRIPT=$GREEN
         color_text "$COLOR_SCRIPT" "[✓] deb--lib LOADED"
     else
         echo -e "ERROR: not loaded deb--lib" >&2
         exit 1
     fi
     else
-    COLOR_SCRIPT=$AQUA
+    COLOR_SCRIPT=$GREEN
 fi
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 source /etc/os-release
 check_update
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
 
-echo "==>>==>>==>> [SUDO] ->->-> Installing..."
-if ! command -v sudo &> /dev/null; then
-    apt install -y sudo
-    echo "==>>==>>==>> [SUDO][✓] ->->-> install completed!"
-else
-    echo "==>>==>>==>> [SUDO][-] ->->-> sudo no installation required"
-fi
+install_pkg "sudo"
 
 # 1.[CONFIG-NEWUSER] Checking if the user exists
-echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> create user..."
-read -p "Insert name new user: " USERNAME
+color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> create user..."
+color_text "$COLOR_SCRIPT" "Insert name new user: "
+read -p USERNAME < /dev/tty
 
 if id "$USERNAME" &>/dev/null; then
-    echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User '$USERNAME' already exists."
+    color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User '$USERNAME' already exists."
 else
     # === insert password ===
-    read -s -p "==>>==>>==>> [CONFIG-NEWUSER] ->->-> Insert password for $USERNAME: " PASSWORD
+    color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> Insert password for $USERNAME: "
+    read -s -p PASSWORD < /dev/tty
     echo
-    read -s -p "==>>==>>==>> [CONFIG-NEWUSER] ->->-> Repeat password: " PASSWORD2
+    color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> Repeat password: "
+    read -s -p  PASSWORD2 < /dev/tty
     echo
 
     if [ "$PASSWORD" != "$PASSWORD2" ]; then
-        echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> [!] Passwords do not match. Aborting."
+        color_text "$RED" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> [!] Passwords do not match. Aborting."
         exit 1
     fi
 
     # === Create user ===
-    echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> Create user $USERNAME..."
+    color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> Create user $USERNAME..."
     useradd -m -s /bin/bash "$USERNAME"
     echo "$USERNAME:$PASSWORD" | chpasswd
-    echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User $USERNAME created"
+    color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User $USERNAME created"
 
     # === Add group sudo ===
     # usermod -aG sudo "$USERNAME"
@@ -66,4 +63,4 @@ fi
 
 # 2.[CONFIG-NEWUSER] Add USERNAME to group sudo ===
 usermod -aG sudo "$USERNAME"
-echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User $USERNAME added to sudo group"
+color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User $USERNAME added to sudo group"
