@@ -4,27 +4,30 @@
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 set -euo pipefail
-. /etc/os-release
-
-# 0. Загрузка библиотеки
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+if ! command -v curl >/dev/null 2>&1; then
+    apt-get update -qq && apt-get install -y curl >/dev/null
+fi
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
-    if source <(wget -qO- https://mls.sk87.top/deb--lib); then
+    if source <(curl -sLf https://mls.sk87.top/deb--lib); then
         export DEB_LIB_STATUS="loaded"
-        COLOR_SCRIPT=$GREEN
+        COLOR_SCRIPT=$AQUA
         color_text "$COLOR_SCRIPT" "[✓] deb--lib LOADED"
     else
-        echo "ERROR: not loaded deb--lib" >&2
+        echo -e "ERROR: not loaded deb--lib" >&2
         exit 1
     fi
-else
-    COLOR_SCRIPT=$GREEN
+    else
+    COLOR_SCRIPT=$AQUA
 fi
-
-# 1. [CONFIG-NETWORK] Инициализация
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+source /etc/os-release
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
 color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> START Configuration..."
 
 CONFIG_FILE="/etc/network/interfaces"
-# Автоопределение интерфейса (безопасный вариант)
+
 IFACE=$(ip -o -4 route show to default | awk '{print $5}' | head -n1)
 
 if [[ -z "${IFACE:-}" ]]; then
@@ -36,19 +39,14 @@ color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Interface found
 color_text "$COLOR_SCRIPT" "Select network setup type:"
 color_text "$COLOR_SCRIPT" "d) Dynamic (DHCP)"
 color_text "$COLOR_SCRIPT" "s) Static IP"
-
-# Используем нашу новую функцию с флагом -n
 color_text -n "$COLOR_SCRIPT" "Enter d or s: "
 read -rn1 MODE < /dev/tty
-echo "" # Перенос строки после нажатия клавиши
+echo ""
 
-# Создание бэкапа
 cp "$CONFIG_FILE" "$CONFIG_FILE.bak"
 
-# 2. Логика конфигурации
 if [[ "$MODE" == "d" ]]; then
     color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> DHCP Configuration..."
-
     cat > "$CONFIG_FILE" <<EOF
 auto lo
 iface lo inet loopback
@@ -92,9 +90,10 @@ iface $IFACE inet static
     address $IP_ADDR
     netmask $NETMASK
     gateway $GATEWAY
-    dns-nameservers $DNS
+    nameservers $DNS
 EOF
 
+echo "nameserver $DNS" > /etc/resolv.conf
 else
     color_text "$RED" "==>>==>>==>> [CONFIG-NETWORK][!] ->->-> Interrupted. No changes made."
     return 1
@@ -102,10 +101,7 @@ fi
 
 # 3. Применение настроек
 color_text "$YELLOW" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Restarting interface $IFACE..."
-
 systemctl enable --now systemd-networkd
 networkctl reload
 networkctl reconfigure "$IFACE"
-
-# Финал
 color_text "$GREEN" "==>>==>>==>> [CONFIG-NETWORK][✓] ->->-> Configuration completed!"

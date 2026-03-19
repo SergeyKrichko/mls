@@ -4,8 +4,26 @@
 # mls-deb--config-ssh-25-12-13
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 set -euo pipefail
-. /etc/os-release
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+if ! command -v curl >/dev/null 2>&1; then
+    apt-get update -qq && apt-get install -y curl >/dev/null
+fi
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
+    if source <(curl -sLf https://mls.sk87.top/deb--lib); then
+        export DEB_LIB_STATUS="loaded"
+        COLOR_SCRIPT=$AQUA
+        color_text "$COLOR_SCRIPT" "[✓] deb--lib LOADED"
+    else
+        echo -e "ERROR: not loaded deb--lib" >&2
+        exit 1
+    fi
+    else
+    COLOR_SCRIPT=$AQUA
+fi
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+source /etc/os-release
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
 
 echo "==>>==>>==>> [CONFIG-SSH] ->->-> Configuration SSH..."
 CONFIG_FILE="/etc/ssh/sshd_config"
@@ -18,7 +36,7 @@ fi
 echo "==>>==>>==>> [CONFIG-SSH] ->->-> Current SSH port: $CURRENT_PORT"
 
 # === Request new port ===
-read -p "==>>==>>==>> [CONFIG-SSH] ->->-> Enter a new port for SSH (1-65535): " NEW_PORT
+read -p "==>>==>>==>> [CONFIG-SSH] ->->-> Enter a new port for SSH (1-65535): " NEW_PORT  < /dev/tty
 
 # === Port check ===
 if ! [[ "$NEW_PORT" =~ ^[0-9]+$ ]] || [ "$NEW_PORT" -lt 1 ] || [ "$NEW_PORT" -gt 65535 ]; then

@@ -5,22 +5,26 @@
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
 set -euo pipefail
-source /etc/os-release
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
-    if source <(wget -qO- https://mls.sk87.top/deb--lib); then
-        export DEB_LIB_STATUS="loaded"
-        COLOR_SCRIPT=$GREEN
-        color_text "$COLOR_SCRIPT" "[✓] deb--lib LOADED"
-    else
-        echo "ERROR: not loaded deb--lib" >&2
-        exit 1
-    fi
-else
-    COLOR_SCRIPT=$GREEN
+if ! command -v curl >/dev/null 2>&1; then
+    apt-get update -qq && apt-get install -y curl >/dev/null
 fi
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-
+if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
+    if source <(curl -sLf https://mls.sk87.top/deb--lib); then
+        export DEB_LIB_STATUS="loaded"
+        COLOR_SCRIPT=$AQUA
+        color_text "$COLOR_SCRIPT" "[✓] deb--lib LOADED"
+    else
+        echo -e "ERROR: not loaded deb--lib" >&2
+        exit 1
+    fi
+    else
+    COLOR_SCRIPT=$AQUA
+fi
+#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
+source /etc/os-release
+#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
 # 1. [CONFIG-NETSOFT]
 color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETSOFT] ->->-> Installing network programs..."
 install_pkg "mtr"
