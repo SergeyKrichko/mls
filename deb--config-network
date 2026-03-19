@@ -12,14 +12,14 @@ fi
 if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
     if source <(curl -sLf https://mls.sk87.top/deb--lib); then
         export DEB_LIB_STATUS="loaded"
-        COLOR_SCRIPT=$AQUA
+        COLOR_SCRIPT=$GREEN
         color_text "$COLOR_SCRIPT" "[✓] deb--lib LOADED"
     else
         echo -e "ERROR: not loaded deb--lib" >&2
         exit 1
     fi
     else
-    COLOR_SCRIPT=$AQUA
+    COLOR_SCRIPT=$GREEN
 fi
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 source /etc/os-release
