@@ -34,6 +34,7 @@ CURRENT_PORT=$(grep -E "^Port " "$CONFIG_FILE" | awk '{print $2}' || true)
 if [ -z "$CURRENT_PORT" ]; then
     CURRENT_PORT=22
 fi
+
 color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-SSH] ->->-> Current SSH port: $CURRENT_PORT"
 color_text -n "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-SSH] ->->-> Enter a new port for SSH (1-65535): "
 # === Request new port ===
