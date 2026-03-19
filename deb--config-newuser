@@ -26,11 +26,6 @@ fi
 source /etc/os-release
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
 
-# 0. [SYSTEM]
-echo "==>>==>>==>> [SYSTEM] ->->-> Update and Upgrade"
-apt update -y && apt upgrade -y
-echo "==>>==>>==>> [SYSTEM][✓] ->->-> Update and Upgrade completed!"
-
 echo "==>>==>>==>> [SUDO] ->->-> Installing..."
 if ! command -v sudo &> /dev/null; then
     apt install -y sudo

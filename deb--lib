@@ -27,10 +27,7 @@ install_pkg() {
     local pkg=${2:-$1}
     if ! command -v "$cmd" >/dev/null 2>&1; then
         color_text "$YELLOW" "[+] Install: $pkg"
-        if [[ ! -f "$SESSION_DIR/apt_updated" ]]; then
-            apt-get update -qq
-            echo "$(date +%T) install_pkg $cmd" > "$SESSION_DIR/apt_updated"
-        fi
+        check_update "install_pkg $cmd"
         apt-get install -y "$pkg" || { 
             color_text  "$RED" "Error: Failed to install $pkg";
             return 1;
@@ -70,7 +67,7 @@ upgrade_system(){
                 color_text "$CYAN" "[+] UPDATE and UPGRADE (dist-upgrade)..."
                 export DEBIAN_FRONTEND=noninteractive
                 apt-get update && apt-get dist-upgrade -y
-                echo "$(date +%T) $SESSION_NAME" > "$SESSION_DIR/apt_updated"
+                echo "$(date +%T) DIST-UPGRADE SYSTEM == YES" > "$SESSION_DIR/apt_updated"
                 if [[ -f /run/reboot-required ]]; then
                     color_text "$RED" "[!!!] WARNING: System reboot is required to apply updates!"
                     if [[ -f /run/reboot-required.pkgs ]]; then
@@ -168,8 +165,27 @@ validate_ip() {
         return 1
     fi
 }
+
+check_update() {
+    local mark="${1:-"check_update"}"
+    local flag="$SESSION_DIR/apt_updated"
+
+    if [[ ! -f "$flag" ]]; then
+        color_text "$YELLOW" "==>> Обновление кэша APT ($mark)..."
+        if apt-get update -y -qq; then
+            echo "$(date +%T) $mark" > "$flag"
+            return 0
+        else
+            color_text "$RED" "[!] Ошибка обновления APT. Проверьте сеть."
+            return 1
+        fi
+    fi
+    return 0
+}
+
 export -f install_pkg
 export -f color_text
 export -f setup_session
 export -f cleanup
 export -f validate_ip
+export -f check_update
