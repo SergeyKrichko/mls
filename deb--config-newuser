@@ -31,17 +31,17 @@ install_pkg "sudo"
 
 # 1.[CONFIG-NEWUSER] Checking if the user exists
 color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> create user..."
-color_text "$COLOR_SCRIPT" "Insert name new user: "
+color_text -n "$COLOR_SCRIPT" "Insert name new user: "
 read -p USERNAME < /dev/tty
 
 if id "$USERNAME" &>/dev/null; then
     color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User '$USERNAME' already exists."
 else
     # === insert password ===
-    color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> Insert password for $USERNAME: "
+    color_text -n "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> Insert password for $USERNAME: "
     read -s -p PASSWORD < /dev/tty
     echo
-    color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> Repeat password: "
+    color_text -n "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> Repeat password: "
     read -s -p  PASSWORD2 < /dev/tty
     echo
 
@@ -55,10 +55,6 @@ else
     useradd -m -s /bin/bash "$USERNAME"
     echo "$USERNAME:$PASSWORD" | chpasswd
     color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User $USERNAME created"
-
-    # === Add group sudo ===
-    # usermod -aG sudo "$USERNAME"
-    # echo "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User $USERNAME added to sudo group"
 fi
 
 # 2.[CONFIG-NEWUSER] Add USERNAME to group sudo ===
