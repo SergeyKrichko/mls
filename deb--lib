@@ -140,15 +140,15 @@ choice_menu_idx() {
     local label="${raw%%|*}"; label="${label#"${label%%[![:space:]]*}"}"; label="${label%"${label##*[![:space:]]}"}"
     local file="${raw##*|}"; file="${file#"${file%%[![:space:]]*}"}"; file="${file%"${file##*[![:space:]]}"}"
 
-    color_text "$CYAN" "------------------------------------------"
-    color_text "$CYAN" ">>> Запуск: $label"
+    color_text "$COLOR_SCRIPT" "------------------------------------------"
+    color_text "$COLOR_SCRIPT" ">>> Запуск: $label"
 
     if ! bash <(curl -sLf "$BASE_URL/$file"); then
         color_text "$RED" "[!] Модуль завершился с ошибкой"
     fi
     
-    color_text "$CYAN" "------------------------------------------"
-    color_text "$CYAN" "Нажмите любую клавишу для возврата в меню..."
+    color_text "$COLOR_SCRIPT" "------------------------------------------"
+    color_text "$COLOR_SCRIPT" "Нажмите любую клавишу для возврата в меню..."
     read -rn1 _ < /dev/tty
 }
 
