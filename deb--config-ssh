@@ -23,9 +23,10 @@ if [[ "${DEB_LIB_STATUS:-}" != "loaded" ]]; then
 fi
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
 source /etc/os-release
+check_update
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#
 
-echo "==>>==>>==>> [CONFIG-SSH] ->->-> Configuration SSH..."
+color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-SSH] ->->-> Configuration SSH..."
 CONFIG_FILE="/etc/ssh/sshd_config"
 
 # Get the current port (default 22 if not specified)
@@ -33,19 +34,19 @@ CURRENT_PORT=$(grep -E "^Port " "$CONFIG_FILE" | awk '{print $2}' || true)
 if [ -z "$CURRENT_PORT" ]; then
     CURRENT_PORT=22
 fi
-echo "==>>==>>==>> [CONFIG-SSH] ->->-> Current SSH port: $CURRENT_PORT"
+color_text -n "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-SSH] ->->-> Current SSH port: $CURRENT_PORT"
 
 # === Request new port ===
 read -p "==>>==>>==>> [CONFIG-SSH] ->->-> Enter a new port for SSH (1-65535): " NEW_PORT  < /dev/tty
 
 # === Port check ===
 if ! [[ "$NEW_PORT" =~ ^[0-9]+$ ]] || [ "$NEW_PORT" -lt 1 ] || [ "$NEW_PORT" -gt 65535 ]; then
-    echo "==>>==>>==>> [CONFIG-SSH][!] ->->-> Invalid port: $NEW_PORT"
+    color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-SSH][!] ->->-> Invalid port: $NEW_PORT"
     exit 1
 fi
 
 # === Changing the port in CONFIG_FILE ===
-echo "==>>==>>==>> [CONFIG-SSH] ->->-> Changing the SSH port to $NEW_PORT..."
+color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-SSH] ->->-> Changing the SSH port to $NEW_PORT..."
 if grep -q "^#Port" "$CONFIG_FILE"; then
     sed -i "s/^#Port.*/Port $NEW_PORT/" "$CONFIG_FILE"
 elif grep -q "^Port" "$CONFIG_FILE"; then
@@ -61,6 +62,6 @@ if command -v ufw &>/dev/null && ufw status | grep -q "Status: active"; then
 fi
 
 # === Restart SSH ===
-echo "==>>==>>==>> [CONFIG-SSH] ->->-> Restart ssh..."
+color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-SSH] ->->-> Restart ssh..."
 systemctl restart ssh
-echo "==>>==>>==>> [CONFIG-SSH][✓] ->->-> SSH now listens on port $NEW_PORT"
+color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-SSH][✓] ->->-> SSH now listens on port $NEW_PORT"
