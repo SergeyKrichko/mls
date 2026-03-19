@@ -213,8 +213,6 @@ upgrade_system(){
     done
 }
 
-
-
 validate_ip() {
     local ip="${1:-}"
     local re='^([0-9]{1,3}\.){3}[0-9]{1,3}$'

@@ -57,28 +57,10 @@ iface $IFACE inet dhcp
 EOF
 
 elif [[ "$MODE" == "s" ]]; then
-    ask_step() {
-        local prompt=$1
-        local var_name=$2
-        while true; do
-            color_text -n "$COLOR_SCRIPT" "$prompt (or 'q' to abort): "
-            read -r input < /dev/tty
-            if [[ "${input,,}" == "q" ]]; then
-                color_text "$YELLOW" "[!] Aborted by user."
-                return 1 # Сигнализируем об отмене
-            fi
-            if validate_ip "$input"; then
-                eval "$var_name=\"$input\""
-                return 0
-            fi
-            color_text "$RED" "[!] Invalid format. Try again."
-        done
-    }
-
-    ask_step "Static IP: "  "IP_ADDR" || exit 0
-    ask_step "Netmask: "    "NETMASK" || exit 0
-    ask_step "Gateway: "    "GATEWAY" || exit 0
-    ask_step "DNS: "        "DNS"     || exit 0
+    input_step "Static IP: "  "IP_ADDR" "IP" || exit 0
+    input_step "Netmask: "    "NETMASK" "IP" || exit 0
+    input_step "Gateway: "    "GATEWAY" "IP" || exit 0
+    input_step "DNS: "        "DNS"     "IP" || exit 0
 
     color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Setting up a static IP..."
 
