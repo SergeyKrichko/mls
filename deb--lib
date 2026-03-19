@@ -4,6 +4,48 @@
 # mls-deb--lib-26-03-10
 # Sergey Krichko
 #=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
+check_update() {
+    local mark="${1:-"check_update"}"
+    local flag="$SESSION_DIR/apt_updated"
+
+    if [[ ! -f "$flag" ]]; then
+        color_text "$YELLOW" "==>> Обновление кэша APT ($mark)..."
+        if apt-get update -y -qq; then
+            echo "$(date +%T) $mark" > "$flag"
+            return 0
+        else
+            color_text "$RED" "[!] Ошибка обновления APT. Проверьте сеть."
+            return 1
+        fi
+    fi
+    return 0
+}
+
+choice_menu_idx() {
+    local idx=$1
+    local raw="${MENU_ITEMS[$idx]}"
+    local label="${raw%%|*}"; label="${label#"${label%%[![:space:]]*}"}"; label="${label%"${label##*[![:space:]]}"}"
+    local file="${raw##*|}"; file="${file#"${file%%[![:space:]]*}"}"; file="${file%"${file##*[![:space:]]}"}"
+
+    color_text "$COLOR_SCRIPT" "------------------------------------------"
+    color_text "$COLOR_SCRIPT" ">>> Запуск: $label"
+
+    if ! bash <(curl -sLf "$BASE_URL/$file"); then
+        color_text "$RED" "[!] Модуль завершился с ошибкой"
+    fi
+    
+    color_text "$COLOR_SCRIPT" "------------------------------------------"
+    color_text "$COLOR_SCRIPT" "Нажмите любую клавишу для возврата в меню..."
+    read -rn1 _ < /dev/tty
+}
+
+cleanup() {
+    rm -rf "$SESSION_DIR"
+    tput cnorm   # Показать курсор
+    tput rmcup   # Вернуть основной буфер терминала
+    echo "[*] Возврат в основную консоль. История сохранена."
+}
+
 export RED='\e[31m'
 export GREEN='\e[32m'
 export YELLOW='\e[33m'
@@ -20,6 +62,53 @@ color_text() {
     local color="${1:-$NC}"
     shift
     echo $flags "${color}$*${NC}"
+}
+
+input_step() {
+    local prompt="$1"
+    local var_name="$2"
+    local mode="${3:-"ANY"}"
+    local input
+
+    while true; do
+        color_text -n "$COLOR_SCRIPT" "$prompt (or 'q' to abort): "
+
+        # Выбираем режим чтения: -s скрывает ввод для паролей
+        if [[ "$mode" == "PASS" ]]; then
+            read -rs input < /dev/tty
+            echo "" # Перенос строки после скрытого ввода
+        else
+            read -r input < /dev/tty
+        fi
+
+        # Проверка на выход
+        if [[ "${input,,}" == "q" ]]; then
+            color_text "$YELLOW" "[!] Aborted by user."
+            return 1
+        fi
+
+        local valid=false
+        case "$mode" in
+            "IP")
+                validate_ip "$input" && valid=true
+                ;;
+            "PASS")
+                # Пароль не должен быть пустым
+                [[ -n "$input" ]] && valid=true
+                ;;
+            "ANY"|*)
+                # Любой непустой ввод
+                [[ -n "$input" ]] && valid=true
+                ;;
+        esac
+
+        if [[ "$valid" == "true" ]]; then
+            eval "$var_name=\"$input\""
+            return 0
+        fi
+
+        color_text "$RED" "[!] Invalid $mode format. Try again."
+    done
 }
 
 install_pkg() {
@@ -49,42 +138,6 @@ setup_session() {
         color_text  "$RED" "Критическая ошибка: Не удалось создать SESSION_DIR" >&2
         return 1
     fi
-}
-
-cleanup() {
-    rm -rf "$SESSION_DIR"
-    tput cnorm   # Показать курсор
-    tput rmcup   # Вернуть основной буфер терминала
-    echo "[*] Возврат в основную консоль. История сохранена."
-}
-
-upgrade_system(){
-    echo -ne "${COLOR_SCRIPT}UPGRADE SYSTEM? [Y/n]: ${NC}"
-    while true; do
-        read -n 1 -r -s answer < /dev/tty
-        case "$answer" in
-            [Yy]|"") 
-                color_text "$CYAN" "[+] UPDATE and UPGRADE (dist-upgrade)..."
-                export DEBIAN_FRONTEND=noninteractive
-                apt-get update && apt-get dist-upgrade -y
-                echo "$(date +%T) DIST-UPGRADE SYSTEM == YES" > "$SESSION_DIR/apt_updated"
-                if [[ -f /run/reboot-required ]]; then
-                    color_text "$RED" "[!!!] WARNING: System reboot is required to apply updates!"
-                    if [[ -f /run/reboot-required.pkgs ]]; then
-                        echo "[*] Packages requiring reboot:"
-                        sed 's/^/    - /' /run/reboot-required.pkgs
-                    fi
-                fi
-                break 
-                ;;
-            [Nn])
-                color_text "$CYAN" "[-] MISSED UPGRADE."
-                break 
-                ;;
-            *)
-                ;;
-        esac
-    done
 }
 
 show_menu() {
@@ -131,23 +184,36 @@ show_menu() {
     done
 }
 
-choice_menu_idx() {
-    local idx=$1
-    local raw="${MENU_ITEMS[$idx]}"
-    local label="${raw%%|*}"; label="${label#"${label%%[![:space:]]*}"}"; label="${label%"${label##*[![:space:]]}"}"
-    local file="${raw##*|}"; file="${file#"${file%%[![:space:]]*}"}"; file="${file%"${file##*[![:space:]]}"}"
-
-    color_text "$COLOR_SCRIPT" "------------------------------------------"
-    color_text "$COLOR_SCRIPT" ">>> Запуск: $label"
-
-    if ! bash <(curl -sLf "$BASE_URL/$file"); then
-        color_text "$RED" "[!] Модуль завершился с ошибкой"
-    fi
-    
-    color_text "$COLOR_SCRIPT" "------------------------------------------"
-    color_text "$COLOR_SCRIPT" "Нажмите любую клавишу для возврата в меню..."
-    read -rn1 _ < /dev/tty
+upgrade_system(){
+    echo -ne "${COLOR_SCRIPT}UPGRADE SYSTEM? [Y/n]: ${NC}"
+    while true; do
+        read -n 1 -r -s answer < /dev/tty
+        case "$answer" in
+            [Yy]|"") 
+                color_text "$CYAN" "[+] UPDATE and UPGRADE (dist-upgrade)..."
+                export DEBIAN_FRONTEND=noninteractive
+                apt-get update && apt-get dist-upgrade -y
+                echo "$(date +%T) DIST-UPGRADE SYSTEM == YES" > "$SESSION_DIR/apt_updated"
+                if [[ -f /run/reboot-required ]]; then
+                    color_text "$RED" "[!!!] WARNING: System reboot is required to apply updates!"
+                    if [[ -f /run/reboot-required.pkgs ]]; then
+                        echo "[*] Packages requiring reboot:"
+                        sed 's/^/    - /' /run/reboot-required.pkgs
+                    fi
+                fi
+                break 
+                ;;
+            [Nn])
+                color_text "$CYAN" "[-] MISSED UPGRADE."
+                break 
+                ;;
+            *)
+                ;;
+        esac
+    done
 }
+
+
 
 validate_ip() {
     local ip="${1:-}"
@@ -166,26 +232,13 @@ validate_ip() {
     fi
 }
 
-check_update() {
-    local mark="${1:-"check_update"}"
-    local flag="$SESSION_DIR/apt_updated"
-
-    if [[ ! -f "$flag" ]]; then
-        color_text "$YELLOW" "==>> Обновление кэша APT ($mark)..."
-        if apt-get update -y -qq; then
-            echo "$(date +%T) $mark" > "$flag"
-            return 0
-        else
-            color_text "$RED" "[!] Ошибка обновления APT. Проверьте сеть."
-            return 1
-        fi
-    fi
-    return 0
-}
-
-export -f install_pkg
-export -f color_text
-export -f setup_session
-export -f cleanup
-export -f validate_ip
 export -f check_update
+# export -f choice_menu_idx
+export -f cleanup
+export -f color_text
+export -f input_step
+export -f install_pkg
+export -f setup_session
+# export -f show_menu
+export -f upgrade_system
+export -f validate_ip

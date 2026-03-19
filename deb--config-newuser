@@ -32,14 +32,14 @@ install_pkg "sudo"
 # 1.[CONFIG-NEWUSER] Checking if the user exists
 color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> create user..."
 color_text -n "$COLOR_SCRIPT" "Insert name new user: "
-read -p USERNAME < /dev/tty
+read -r USERNAME < /dev/tty
 
 if id "$USERNAME" &>/dev/null; then
     color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> User '$USERNAME' already exists."
 else
     # === insert password ===
     color_text -n "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> Insert password for $USERNAME: "
-    read -s -p PASSWORD < /dev/tty
+    read -r -s -p PASSWORD < /dev/tty
     echo
     color_text -n "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NEWUSER] ->->-> Repeat password: "
     read -s -p  PASSWORD2 < /dev/tty

@@ -37,7 +37,7 @@ fi
 color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-SSH] ->->-> Current SSH port: $CURRENT_PORT"
 color_text -n "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-SSH] ->->-> Enter a new port for SSH (1-65535): "
 # === Request new port ===
-read -p  NEW_PORT  < /dev/tty
+read -r NEW_PORT < /dev/tty
 
 # === Port check ===
 if ! [[ "$NEW_PORT" =~ ^[0-9]+$ ]] || [ "$NEW_PORT" -lt 1 ] || [ "$NEW_PORT" -gt 65535 ]; then
