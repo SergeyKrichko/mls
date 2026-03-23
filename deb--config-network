@@ -28,13 +28,47 @@ check_update
 color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> START Configuration..."
 
 CONFIG_FILE="/etc/network/interfaces"
+DEFAULT_IFACE=$(ip -o -4 route show to default | awk '{print $5}' | head -n1)
+all_interfaces=$(ls /sys/class/net | grep -v 'lo' | tr '\n' ' ')
 
-IFACE=$(ip -o -4 route show to default | awk '{print $5}' | head -n1)
+color_text "$COLOR_SCRIPT" ">>> Обнаружены интерфейсы: $all_interfaces"
+color_text "$COLOR_SCRIPT" "Рекомендованный (GW): ${DEFAULT_IFACE:-"не найден"}"
+color_text "$COLOR_SCRIPT" "--------------------------------------------------------"
 
-if [[ -z "${IFACE:-}" ]]; then
-    color_text "$RED" "[!] Ошибка: Активный сетевой интерфейс не найден."
-    exit 1
+IFACE=""
+color_text -n "$COLOR_SCRIPT" "Выберите интерфейс [По умолчанию: $DEFAULT_IFACE] (5 сек): "
+
+for ((i=5; i>0; i--)); do
+    echo -ne "\rВыберите интерфейс [По умолчанию: $DEFAULT_IFACE] ($i сек): "
+    if read -t 1 -r user_input; then
+        IFACE=$user_input
+        break
+    fi
+done
+
+echo "" # Перенос строки после цикла
+
+if [[ -z "$IFACE" ]]; then
+    if [[ -n "$DEFAULT_IFACE" ]]; then
+        color_text "$COLOR_SCRIPT" "[i] Время вышло. Автовыбор: $DEFAULT_IFACE"
+        IFACE=$DEFAULT_IFACE
+    else
+        color_text "$RED" "[!] Тайм-аут, а дефолтный интерфейс не найден. Введите вручную."
+        input_step "Interface name" "IFACE" "ANY" || exit 1
+    fi
+else
+    if ! ls /sys/class/net | grep -qw "$IFACE"; then
+        color_text "$RED" "[!] Ошибка: '$IFACE' не существует. Откат к $DEFAULT_IFACE"
+        IFACE=$DEFAULT_IFACE
+    fi
 fi
+
+[[ -z "$IFACE" ]] && { color_text "$RED" "Критическая ошибка: интерфейс не выбран."; exit 1; }
+
+color_text "$GREEN" "[✓] Работаем с интерфейсом: $IFACE"
+
+
+
 
 color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> Interface found: $IFACE"
 color_text "$COLOR_SCRIPT" "Select network setup type:"
@@ -73,7 +107,6 @@ iface $IFACE inet static
     address $IP_ADDR
     netmask $NETMASK
     gateway $GATEWAY
-    nameservers $DNS
 EOF
 
 echo "nameserver $DNS" > /etc/resolv.conf
