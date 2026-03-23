@@ -28,6 +28,7 @@ check_update
 color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> START Configuration..."
 
 CONFIG_FILE="/etc/network/interfaces"
+IFACE=""
 DEFAULT_IFACE=$(ip -o -4 route show to default | awk '{print $5}' | head -n1)
 all_interfaces=$(ls /sys/class/net | grep -v 'lo' | tr '\n' ' ')
 
@@ -35,12 +36,10 @@ color_text "$COLOR_SCRIPT" ">>> Обнаружены интерфейсы: $all_
 color_text "$COLOR_SCRIPT" "Рекомендованный (GW): ${DEFAULT_IFACE:-"не найден"}"
 color_text "$COLOR_SCRIPT" "--------------------------------------------------------"
 
-IFACE=""
 color_text -n "$COLOR_SCRIPT" "Выберите интерфейс [По умолчанию: $DEFAULT_IFACE] (5 сек): "
-
-for ((i=5; i>0; i--)); do
+for ((i=10; i>0; i--)); do
     echo -ne "\rВыберите интерфейс [По умолчанию: $DEFAULT_IFACE] ($i сек): "
-    if read -t 1 -r user_input; then
+    if read -t 1 -r user_input < /dev/tty; then
         IFACE=$user_input
         break
     fi
