@@ -23,7 +23,7 @@ check_update() {
 
 choice_menu_idx() {
     local idx=$1
-    local raw="${MENU_ITEMS[$idx]}"
+    local raw="${items[$idx]}"
     local label="${raw%%|*}"; label="${label#"${label%%[![:space:]]*}"}"; label="${label%"${label##*[![:space:]]}"}"
     local file="${raw##*|}"; file="${file#"${file%%[![:space:]]*}"}"; file="${file%"${file##*[![:space:]]}"}"
 
@@ -139,14 +139,16 @@ setup_session() {
 }
 
 show_menu() {
+    local -n items="$1" 
+    local -n menu_name="${2:-chose}"
     while true; do
         clear
         color_text  "$COLOR_SCRIPT" "=========================================="
-        color_text  "$COLOR_SCRIPT" "  DEBIAN CONFIGURATOR ( mls.sk87.top )"
+        color_text  "$COLOR_SCRIPT" "  $menu_name "
         color_text  "$COLOR_SCRIPT" "=========================================="
 
-        for i in "${!MENU_ITEMS[@]}"; do
-            raw_label_item="${MENU_ITEMS[$i]}"
+        for i in "${!items[@]}"; do
+            raw_label_item="${items[$i]}"
             label_item="${raw_label_item%%|*}"
             label_item="${label_item#"${label_item%%[![:space:]]*}"}"
             label_item="${label_item%"${label_item##*[![:space:]]}"}"
@@ -166,7 +168,7 @@ show_menu() {
                 ;;
             [1-9])
                 idx=$((choice-1))
-                if (( idx >= 0 && idx < ${#MENU_ITEMS[@]} )); then
+                if (( idx >= 0 && idx < ${#items[@]} )); then
                     choice_menu_idx "$idx"
                 else
                     color_text "$RED" "Пункт $choice не существует"
@@ -226,6 +228,9 @@ validate_ip() {
     else
         return 1
     fi
+}
+validate_pass() {
+
 }
 
 export -f check_update
