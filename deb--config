@@ -54,5 +54,5 @@ MENU_ITEMS=(
   "Add Sudo User                | deb--config-newuser"
 )
 
-show_menu MENU_ITEMS
+show_menu MENU_ITEMS "mls.sk87.top"
 #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
