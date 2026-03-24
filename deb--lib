@@ -141,11 +141,12 @@ setup_session() {
 
 show_menu() {
     local -n show_menu_items="$1" 
-    local -n show_menu_title="${2:-"chose"}"
+    local show_menu_title="${2:-"no title"}"
+    local choice
     while true; do
         clear
         color_text  "$COLOR_SCRIPT" "=========================================="
-        color_text  "$COLOR_SCRIPT" "  Menu $show_menu_title "
+        color_text  "$COLOR_SCRIPT" "  Menu: $show_menu_title "
         color_text  "$COLOR_SCRIPT" "=========================================="
 
         for i in "${!show_menu_items[@]}"; do
