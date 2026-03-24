@@ -23,7 +23,7 @@ check_update() {
 
 choice_menu_idx() {
     local idx=$1
-    local raw="${items[$idx]}"
+    local raw="${show_menu_items[$idx]}"
     local label="${raw%%|*}"; label="${label#"${label%%[![:space:]]*}"}"; label="${label%"${label##*[![:space:]]}"}"
     local file="${raw##*|}"; file="${file#"${file%%[![:space:]]*}"}"; file="${file%"${file##*[![:space:]]}"}"
 
