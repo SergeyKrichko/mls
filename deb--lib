@@ -9,7 +9,7 @@ check_update() {
     local flag="$SESSION_DIR/apt_updated"
 
     if [[ ! -f "$flag" ]]; then
-        color_text "$YELLOW" "==>> Обновление кэша APT ($mark)..."
+        color_text "$COLOR_SCRIPT" "==>> Обновление кэша APT ($mark)..."
         if apt-get update -y -qq; then
             echo "$(date +%T) $mark" > "$flag"
             return 0
@@ -71,18 +71,16 @@ input_step() {
     local input
 
     while true; do
-        color_text -n "$COLOR_SCRIPT" "$prompt (or 'q' to abort): "
+        color_text -n "$COLOR_SCRIPT" "$prompt (or '0' to abort): "
 
-        # Выбираем режим чтения: -s скрывает ввод для паролей
         if [[ "$mode" == "PASS" ]]; then
             read -rs input < /dev/tty
-            echo "" # Перенос строки после скрытого ввода
+            echo ""
         else
             read -r input < /dev/tty
         fi
 
-        # Проверка на выход
-        if [[ "${input,,}" == "q" ]]; then
+        if [[ "${input,,}" == "0" ]]; then
             color_text "$YELLOW" "[!] Aborted by user."
             return 1
         fi
@@ -103,7 +101,7 @@ input_step() {
         esac
 
         if [[ "$valid" == "true" ]]; then
-            eval "$var_name=\"$input\""
+            $var_name="$input"
             return 0
         fi
 

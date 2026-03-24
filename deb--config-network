@@ -37,9 +37,9 @@ color_text "$COLOR_SCRIPT" "Рекомендованный (GW): ${DEFAULT_IFACE
 color_text "$COLOR_SCRIPT" "--------------------------------------------------------"
 
 color_text -n "$COLOR_SCRIPT" "Выберите интерфейс [По умолчанию: $DEFAULT_IFACE] (5 сек): "
-for ((i=10; i>0; i--)); do
+for ((i=5; i>0; i--)); do
     echo -ne "\rВыберите интерфейс [По умолчанию: $DEFAULT_IFACE] ($i сек): "
-    if read -t 1 -r user_input < /dev/tty; then
+    if read -t 1 -r -n user_input < /dev/tty; then
         IFACE=$user_input
         break
     fi
