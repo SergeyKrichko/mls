@@ -22,7 +22,6 @@ check_update() {
 }
 
 choice_menu_idx() {
-    local -n show_menu_items="$1" 
     local idx=$1
     local raw="${show_menu_items[$idx]}"
     local label="${raw%%|*}"; label="${label#"${label%%[![:space:]]*}"}"; label="${label%"${label##*[![:space:]]}"}"
