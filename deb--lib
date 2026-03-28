@@ -22,8 +22,9 @@ check_update() {
 }
 
 choice_menu_idx() {
-    local idx=$1
-    local raw="${show_menu_items[$idx]}"
+    local -n choice_menu_idx_item="$1" 
+    local idx=$2
+    local raw="${choice_menu_idx_item[$idx]}"
     local label="${raw%%|*}"; label="${label#"${label%%[![:space:]]*}"}"; label="${label%"${label##*[![:space:]]}"}"
     local file="${raw##*|}"; file="${file#"${file%%[![:space:]]*}"}"; file="${file%"${file##*[![:space:]]}"}"
 
@@ -170,7 +171,7 @@ show_menu() {
             [1-9])
                 idx=$((choice-1))
                 if (( idx >= 0 && idx < ${#show_menu_items[@]} )); then
-                    choice_menu_idx "$idx"
+                    choice_menu_idx show_menu_items "$idx"
                 else
                     color_text "$RED" "Пункт $choice не существует"
                     echo -e "\n"
