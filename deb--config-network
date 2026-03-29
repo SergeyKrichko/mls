@@ -30,11 +30,14 @@ color_text "$COLOR_SCRIPT" "==>>==>>==>> [CONFIG-NETWORK] ->->-> START Configura
 CONFIG_FILE="/etc/network/interfaces"
 IFACE=""
 DEFAULT_IFACE=$(ip -o -4 route show to default | awk '{print $5}' | head -n1)
-all_interfaces=$(ls /sys/class/net | grep -v 'lo' | tr '\n' ' ')
+all_interfaces=($(ip -o link show | awk -F': ' '$2 != "lo" {print $2}'))
 
-color_text "$COLOR_SCRIPT" ">>> Обнаружены интерфейсы: $all_interfaces"
-color_text "$COLOR_SCRIPT" "Рекомендованный (GW): ${DEFAULT_IFACE:-"не найден"}"
-color_text "$COLOR_SCRIPT" "--------------------------------------------------------"
+# color_text "$COLOR_SCRIPT" ">>> Обнаружены интерфейсы: ${all_interfaces[*]}"
+# color_text "$COLOR_SCRIPT" "Рекомендованный (GW): ${DEFAULT_IFACE:-"не найден"}"
+# color_text "$COLOR_SCRIPT" "--------------------------------------------------------"
+
+show_menu all_interfaces ">>> Обнаружены интерфейсы:"
+
 
 color_text -n "$COLOR_SCRIPT" "Выберите интерфейс [По умолчанию: $DEFAULT_IFACE] (5 сек): "
 for ((i=5; i>0; i--)); do
