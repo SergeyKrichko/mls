@@ -54,7 +54,7 @@ if ! getent passwd php >/dev/null; then
 fi
 # ----------------------------------------------------------------------------------------------
 log_info "Install PHP"
-apt install -y php$phpversion-cli php$phpversion-fpm php$phpversion-common \
+sudo apt install -y php$phpversion-cli php$phpversion-fpm php$phpversion-common \
  php$phpversion-pgsql php$phpversion-curl php$phpversion-xml \
  php$phpversion-dev php$phpversion-imap php$phpversion-redis php$phpversion-apcu php$phpversion-soap \
  php$phpversion-bcmath php$phpversion-bz2 php$phpversion-opcache  php$phpversion-imagick imagemagick \
