@@ -10,7 +10,7 @@ if [[ -z "${1:-}" ]]; then
     echo "Ошибка: не указана версия POSTGRESQL в $0">&2
     exit 1
 fi
-psqlversion=$1
+PSQL_VER=$1
 log_info() {
     echo -e "\n==>>==>>==>> Install POSTGRESQL (postgresql repository) -> $1"
 }
@@ -49,15 +49,15 @@ log_info "update:"
 sudo apt update -y
 
 # LXC user uid
-if ! getent group php >/dev/null; then
+if ! getent group postgres >/dev/null; then
     sudo groupadd -g 235 postgres
 fi
-if ! getent passwd php >/dev/null; then
+if ! getent passwd postgres >/dev/null; then
     sudo useradd -u 235 -g 235 -s /bin/bash -d /var/lib/postgresql postgres
 fi
-
+# ----------------------------------------------------------------------------------------------
 log_info "Install POSTGRESQL"
-sudo apt install -y postgresql-$psqlversion
+sudo apt install -y postgresql-${PSQL_VER}
 # ----------------------------------------------------------------------------------------------
 # ==============================================================================================
 log_info "Installed version:" && sudo psql --version
