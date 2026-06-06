@@ -10,7 +10,7 @@ if [[ -z "${1:-}" ]]; then
     echo "Ошибка: не указана версия PHP в $0">&2
     exit 1
 fi
-phpversion=$1
+PHP_VER=$1
 log_info() {
     echo -e "\n==>>==>>==>> Install PHP (https://packages.sury.org/php/) -> $1"
 }
@@ -54,13 +54,14 @@ if ! getent passwd php >/dev/null; then
 fi
 # ----------------------------------------------------------------------------------------------
 log_info "Install PHP"
-sudo apt install -y php$phpversion-cli php$phpversion-fpm php$phpversion-common \
- php$phpversion-pgsql php$phpversion-curl php$phpversion-xml \
- php$phpversion-dev php$phpversion-imap php$phpversion-redis php$phpversion-apcu php$phpversion-soap \
- php$phpversion-bcmath php$phpversion-bz2 php$phpversion-opcache  php$phpversion-imagick imagemagick \
- php$phpversion-fpm php$phpversion-gd php$phpversion-gmp php$phpversion-intl php$phpversion-mbstring \
- php$phpversion-xmlrpc php$phpversion-zip php$phpversion-memcache php$phpversion-memcached \
- memcached redis-server
+sudo apt-get install -y php${PHP_VER}-cli php${PHP_VER}-fpm php${PHP_VER}-common
+log_info "Install PHP module Required"
+sudo apt-get install -y php${PHP_VER}-curl php${PHP_VER}-xml php${PHP_VER}-gd php${PHP_VER}-mbstring php${PHP_VER}-zip
+log_info "Install PHP module Recommended"
+sudo apt-get install -y php${PHP_VER}-apcu redis-server php${PHP_VER}-redis php${PHP_VER}-intl 
+log_info "Install PHP module For Specific App"
+sudo apt-get install -y php${PHP_VER}-ldap php${PHP_VER}-imap php${PHP_VER}-gmp php${PHP_VER}-imagick php${PHP_VER}-smbclient
+sudo apt-get install -y php${PHP_VER}-pgsql php${PHP_VER}-soap php${PHP_VER}-bcmath php${PHP_VER}-bz2
 # ----------------------------------------------------------------------------------------------
 # ==============================================================================================
 log_info "Installed version:" && sudo php -v
