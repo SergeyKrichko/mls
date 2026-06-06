@@ -13,7 +13,7 @@ echo "-----------------------------------------------------"
 echo "==>>==>>==>> Install NGINX (nginx repository) ->"
 # 0. [SYSTEM]
 echo "==>>==>>==>> Install NGINX (nginx repository) -> [SYSTEM] -> run update:"
-apt update -y
+sudo apt update -y
 echo "==>>==>>==>> Install NGINX (nginx repository) -> [SYSTEM] -> [✓ - update completed!]"
 
 echo "-----------------------------------------------------"
@@ -81,7 +81,7 @@ EOF
 
 #---Start NGINX
 echo "==>>==>>==>> Install NGINX (nginx repository) ->  Start NGINX"
-systemctl start nginx
+sudo systemctl start nginx
 
 #---
 echo "==>>==>>==>> Install NGINX (nginx repository) -> Installed version:" && nginx -v
