@@ -63,7 +63,7 @@ apt install -y php$phpversion-cli php$phpversion-fpm php$phpversion-common \
  memcached redis-server
 # ----------------------------------------------------------------------------------------------
 # ==============================================================================================
-log_info "Installed version:" && php -v
+log_info "Installed version:" && sudo php -v
 sleep 3
 echo "==>>==>>==>>============<<==<<==<<=="
 sleep 1

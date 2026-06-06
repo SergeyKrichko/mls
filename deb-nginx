@@ -81,7 +81,7 @@ log_info "Start NGINX"
 sudo systemctl enable --now nginx
 # ==============================================================================================
 # ----------------------------------------------------------------------------------------------
-log_info "Installed version:" && nginx -v
+log_info "Installed version:" && sudo nginx -v
 sleep 3
 echo "==>>==>>==>>============<<==<<==<<=="
 sleep 1

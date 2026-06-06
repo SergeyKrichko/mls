@@ -60,7 +60,7 @@ log_info "Install POSTGRESQL"
 sudo apt install -y postgresql-$psqlversion
 # ----------------------------------------------------------------------------------------------
 # ==============================================================================================
-log_info "Installed version:" && psql --version
+log_info "Installed version:" && sudo psql --version
 sleep 3
 echo "==>>==>>==>>============<<==<<==<<=="
 sleep 1
