@@ -58,7 +58,7 @@ echo "-----------------------------------------------------"
 echo "==>>==>>==>> Install NGINX (nginx repository) -> Configure"
 #---info about server
 #sed -i  '/<h1>Welcome to nginx!</h1>//<h1>Welcome to nginx! </h1>/s  /usr/share/nginx/html/index.html
-tee /usr/share/nginx/html/index.html > /dev/null <<EOF
+sudo tee /usr/share/nginx/html/index.html > /dev/null <<EOF
 <!DOCTYPE html>
 <html>
 <head>
