@@ -42,10 +42,10 @@ sudo apt update -y
 
 # LXC user uid
 if ! getent group nginx >/dev/null; then
-    sudo groupadd -g 233 nginx
+    sudo groupadd -g 330 nginx
 fi
 if ! getent passwd nginx >/dev/null; then
-    sudo useradd -u 233 -g 233 --system --no-create-home -s /usr/sbin/nologin nginx
+    sudo useradd -u 330 -g 330 --system --no-create-home -s /usr/sbin/nologin nginx
 fi
 # ----------------------------------------------------------------------------------------------
 log_info "Install NGINX LAST STABLE VERSION:"

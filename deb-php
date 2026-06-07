@@ -45,12 +45,12 @@ log_info "update:"
 sudo apt update -y
 
 # LXC user uid
-# if ! getent group php >/dev/null; then
-#     sudo groupadd -g 234 php
-# fi
-# if ! getent passwd php >/dev/null; then
-#     sudo useradd -u 234 -g 234 --system --no-create-home -s /usr/sbin/nologin php
-# fi
+if ! getent group php >/dev/null; then
+    sudo groupadd -g 331 php
+fi
+if ! getent passwd php >/dev/null; then
+    sudo useradd -u 331 -g 331 --system --no-create-home -s /usr/sbin/nologin php
+fi
 # ----------------------------------------------------------------------------------------------
 log_info "Install PHP"
 sudo apt install -y php${PHP_VER}-cli php${PHP_VER}-fpm php${PHP_VER}-common
