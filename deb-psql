@@ -49,10 +49,10 @@ sudo apt update -y
 
 # LXC user uid
 if ! getent group postgres >/dev/null; then
-    sudo groupadd -g 235 postgres
+    sudo groupadd -g 350 postgres
 fi
 if ! getent passwd postgres >/dev/null; then
-    sudo useradd -u 235 -g 235 -s /bin/bash -d /var/lib/postgresql postgres
+    sudo useradd -u 350 -g 350 -s /bin/bash -d /var/lib/postgresql postgres
 fi
 # ----------------------------------------------------------------------------------------------
 log_info "Install POSTGRESQL"

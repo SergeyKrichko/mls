@@ -19,7 +19,6 @@ log_info() {
 # ------------------------ Install PHP (https://packages.sury.org/php/) ------------------------
 # ----------------------------------------------------------------------------------------------
 # 0. [SYSTEM]
-log_info ""
 log_info "[SYSTEM] -> run update:"
 sudo apt update -y
 log_info "[SYSTEM] -> [✓ - update completed!]"
@@ -46,19 +45,19 @@ log_info "update:"
 sudo apt update -y
 
 # LXC user uid
-if ! getent group php >/dev/null; then
-    sudo groupadd -g 234 php
-fi
-if ! getent passwd php >/dev/null; then
-    sudo useradd -u 234 -g 234 --system --no-create-home -s /usr/sbin/nologin php
-fi
+# if ! getent group php >/dev/null; then
+#     sudo groupadd -g 234 php
+# fi
+# if ! getent passwd php >/dev/null; then
+#     sudo useradd -u 234 -g 234 --system --no-create-home -s /usr/sbin/nologin php
+# fi
 # ----------------------------------------------------------------------------------------------
 log_info "Install PHP"
 sudo apt install -y php${PHP_VER}-cli php${PHP_VER}-fpm php${PHP_VER}-common
 log_info "Install PHP module Required"
 sudo apt install -y php${PHP_VER}-curl php${PHP_VER}-xml php${PHP_VER}-gd php${PHP_VER}-mbstring php${PHP_VER}-zip
 log_info "Install PHP module Recommended"
-sudo apt install -y php${PHP_VER}-apcu redis-server php${PHP_VER}-redis php${PHP_VER}-intl 
+sudo apt install -y php${PHP_VER}-apcu redis-server php${PHP_VER}-redis php${PHP_VER}-intl
 log_info "Install PHP module For Specific App"
 sudo apt install -y php${PHP_VER}-ldap php${PHP_VER}-imap php${PHP_VER}-gmp php${PHP_VER}-imagick php${PHP_VER}-smbclient
 sudo apt install -y php${PHP_VER}-pgsql php${PHP_VER}-soap php${PHP_VER}-bcmath php${PHP_VER}-bz2

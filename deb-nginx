@@ -14,7 +14,6 @@ log_info() {
 # ------------------------------ Install NGINX (nginx repository) ------------------------------
 # ----------------------------------------------------------------------------------------------
 # 0. [SYSTEM]
-log_info ""
 log_info "[SYSTEM] -> run update:"
 sudo apt update -y
 log_info "[SYSTEM] -> [✓ - update completed!]"
