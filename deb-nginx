@@ -1,27 +1,27 @@
 #!/bin/bash
-#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
+# #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-# #
 # wget --no-check-certificate https://mls.sk87.top/deb-nginx && bash deb-nginx
-# version by 2025-11-14
+# version by 2026-06-07
 # Sergey Krichko
-#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=#=# 
+# #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-# #
 set -euo pipefail
 . /etc/os-release
 log_info() {
     echo -e "\n==>>==>>==>> Install NGINX (nginx repository) -> $1"
 }
-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#
-# ==============================================================================================
-# ------------------------------ Install NGINX (nginx repository) ------------------------------
-# ----------------------------------------------------------------------------------------------
+# #-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-#-# #
+# =============================================================================================== #
+# ------------------------------ Install NGINX (nginx repository) ------------------------------- #
+# ----------------------------------------------------------------------------------------------- #
 # 0. [SYSTEM]
 log_info "[SYSTEM] -> run update:"
 sudo apt update -y
 log_info "[SYSTEM] -> [✓ - update completed!]"
-# ----------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------- #
 log_info "[SOFT] -> install:"
 sudo apt install -y curl gnupg2 ca-certificates debian-archive-keyring
 log_info "[SOFT] -> [✓ - installed!]"
-# ----------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------- #
 log_info "add key gpg:"
 curl https://nginx.org/keys/nginx_signing.key | gpg --dearmor | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg >/dev/null
 
@@ -36,7 +36,7 @@ EOF
 
 echo -e "Package: *\nPin: origin nginx.org\nPin: release o=nginx\nPin-Priority: 900\n" \
   | sudo tee /etc/apt/preferences.d/99nginx
-# ----------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------- #
 log_info "update:"
 sudo apt update -y
 
@@ -47,18 +47,18 @@ fi
 if ! getent passwd nginx >/dev/null; then
     sudo useradd -u 330 -g 330 --system --no-create-home -s /usr/sbin/nologin nginx
 fi
-# ----------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------- #
 log_info "Install NGINX LAST STABLE VERSION:"
 sudo apt install -y nginx
-# ----------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------- #
 log_info "Configure"
 #---info about server
-#sed -i  '/<h1>Welcome to nginx!</h1>//<h1>Welcome to nginx! </h1>/s  /usr/share/nginx/html/index.html
+#sudo sed -i  '/<h1>Welcome to nginx!</h1>//<h1>Welcome to nginx! </h1>/s  /usr/share/nginx/html/index.html
 sudo tee /usr/share/nginx/html/index.html > /dev/null <<EOF
 <!DOCTYPE html>
 <html>
 <head>
-<title>$(hostname) nginx!</title>
+<title>${HOSTNAME} nginx!</title>
 <style>
 html { color-scheme: light dark; }
 body { width: 35em; margin: 0 auto;
@@ -66,7 +66,7 @@ font-family: Tahoma, Verdana, Arial, sans-serif; }
 </style>
 </head>
 <body>
-<h1>Welcome to nginx! $(hostname)</h1>
+<h1>Welcome to nginx! ${HOSTNAME}</h1>
 <p>If you see this page, the nginx web server is successfully installed and
 working. Further configuration is required.</p>
 
@@ -75,13 +75,15 @@ working. Further configuration is required.</p>
 </html>
 EOF
 
-# ----------------------------------------------------------------------------------------------
+# ----------------------------------------------------------------------------------------------- #
 log_info "Start NGINX"
 sudo systemctl enable --now nginx
-# ==============================================================================================
-# ----------------------------------------------------------------------------------------------
+# =============================================================================================== #
+# ----------------------------------------------------------------------------------------------- #
+echo "==>>==>>==>>============<<==<<==<<=="
+sleep 1
 log_info "Installed version:" && sudo nginx -v
-sleep 3
+sleep 1
 echo "==>>==>>==>>============<<==<<==<<=="
 sleep 1
 echo "==>>==>>==>>   NGINX    <<==<<==<<=="
