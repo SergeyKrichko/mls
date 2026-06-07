@@ -19,7 +19,6 @@ log_info() {
 # ------------------------- Install POSTGRESQL https://postgresql.org/ -------------------------
 # ----------------------------------------------------------------------------------------------
 # 0. [SYSTEM]
-log_info ""
 log_info "[SYSTEM] -> run update:"
 sudo apt update -y
 log_info "[SYSTEM] -> [✓ - update completed!]"
